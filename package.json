@@ -1,0 +1,11 @@
+{
+  "name": "ofac-openapi",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "^8.0.0",
+    "@netlify/functions": "^2.0.0",
+    "csv-parse": "^5.5.6",
+    "fuse.js": "^7.0.0"
+  }
+}
