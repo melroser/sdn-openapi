@@ -175,4 +175,4 @@ export default async (_req: Request, _context: Context) => {
 // Runs every 6 hours. Cron is UTC.  [oai_citation:10‡Netlify Docs](https://docs.netlify.com/build/functions/scheduled-functions/)
 export const config: Config = {
   schedule: "0 */6 * * *"
-};:wq
+}
