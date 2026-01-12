@@ -1,32 +1,4 @@
-500)}`);
-  }
-    return body;
-    }
-
-    export default async (_req: Request, _context: Context) => {
-          try {
-                  // Make parse import happen inside try/catch so module issues show up
-              //     const { parse } = await import("csv-parse/sync");
-              //
-              //         const store = getStore("ofac");
-              //             const fetchedAt = new Date().toISOString();
-              //
-              //                 const sdnUrl = `${OFAC_EXPORT_BASE}/SDN.CSV`;
-              //                     const sdnCsv = await fetchText(sdnUrl);
-              //
-              //                         const rows = parse(sdnCsv, {
-              //                               columns: true,
-              //                                     skip_empty_lines: true,
-              //                                           bom: true,
-              //                                                 relax_quotes: true,
-              //                                                       relax_column_count: true,
-              //                                                             trim: true,
-              //                                                                 }) as Array<Record<string, string>>;
-              //
-              //                                                                     // Minimal SDN-only dataset
-              //                                                                         const entities = rows
-              //                                                                               .map((row) => {
-              //                                                                                       const uid = row["ent_num"] || row["ENT_NUM"] || row[import type { Config, Context } from "@netlify/functions";
+import type { Config, Context } from "@netlify/functions";
 import { getStore } from "@netlify/blobs";
 import crypto from "node:crypto";
 import zlib from "node:zlib";
@@ -48,28 +20,53 @@ async function fetchText(url: string) {
 
   const body = await res.text().catch(() => "");
   if (!res.ok) {
-    throw new Error(`OFAC fetch failed ${res.status} ${res.statusText} :: ${url}\n${body.slice(0, "uid"] || row["UID"];
-        const name = row["sdn_name"] || row["SDN_NAME"] || row["name"] || row["NAME"];
-        const type = row["sdn_type"] || row["SDN_TYPE"] || row["type"] || row["TYPE"];
-        const program = row["program"] || row["PROGRAM"] || "";
-        const remarks = row["remarks"] || row["REMARKS"] || "";
+    throw new Error(`OFAC fetch failed ${res.status} ${res.statusText} :: ${url}\n${body.slice(0, 500)}`);
+  }
+  return body;
+}
 
-        if (!uid || !name) return null;
+export default async (_req: Request, _context: Context) => {
+  try {
+    // Make parse import happen inside try/catch so module issues show up
+    const { parse } = await import("csv-parse/sync");
 
-        return {
-          uid: String(uid),
-          name: String(name),
-          type: type ? String(type) : undefined,
-          programs: program
-            ? String(program).split(/[,;]+/).map((s) => s.trim()).filter(Boolean)
-            : [],
-          remarks: remarks ? String(remarks) : undefined,
-          aka: [],
-          addresses: [],
-        };
-      })
-      .filter(Boolean);
+    const store = getStore("ofac");
+    const fetchedAt = new Date().toISOString();
 
+    const sdnUrl = `${OFAC_EXPORT_BASE}/SDN.CSV`;
+    const sdnCsv = await fetchText(sdnUrl);
+
+    const rows = parse(sdnCsv, {
+        columns: (header: string) => header.trim().toLowerCase(), // <-- normalize headers
+        skip_empty_lines: true,
+        bom: true,
+        relax_quotes: true,
+        relax_column_count: true,
+        trim: true,
+    }) as Array<Record<string, string>>;
+
+    const entities = rows    .map((row) => {
+    const uid = row["ent_num"] || row["uid"];          // now normalized
+    const name = row["sdn_name"] || row["name"];       // now normalized
+    const type = row["sdn_type"] || row["type"];
+    const program = row["program"] || "";
+    const remarks = row["remarks"] || "";
+
+    if (!uid || !name) return null;
+
+    return {
+      uid: String(uid),
+      name: String(name),
+      type: type ? String(type) : undefined,
+      programs: program
+        ? String(program).split(/[,;]+/).map(s => s.trim()).filter(Boolean)
+        : [],
+      remarks: remarks ? String(remarks) : undefined,
+      aka: [],
+      addresses: [],
+    };
+  })
+  .filter(Boolean);
     const payloadJson = JSON.stringify(entities);
     const payloadGz = zlib.gzipSync(Buffer.from(payloadJson, "utf8"));
 
@@ -105,4 +102,3 @@ async function fetchText(url: string) {
 export const config: Config = {
   schedule: "0 */6 * * *",
 };
-
