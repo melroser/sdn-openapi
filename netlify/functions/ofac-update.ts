@@ -10,6 +10,25 @@ function sha256(text: string) {
   return crypto.createHash("sha256").update(text, "utf8").digest("hex");
 }
 
+function normalizeHeader(header: string): string {
+  // Make headers consistent across variations:
+  // "Ent Num" -> "ent_num", "SDN Name" -> "sdn_name", etc.
+  return header
+    .trim()
+    .toLowerCase()
+    .replace(/\uFEFF/g, "") // strip BOM if it sneaks in
+    .replace(/[^\w\s]/g, "") // remove punctuation
+    .replace(/\s+/g, "_"); // whitespace -> underscores
+}
+
+function firstDefined(row: Record<string, string>, keys: string[]): string | undefined {
+  for (const k of keys) {
+    const v = row[k];
+    if (v !== undefined && v !== null && String(v).trim() !== "") return String(v);
+  }
+  return undefined;
+}
+
 async function fetchText(url: string) {
   const res = await fetch(url, {
     headers: {
@@ -20,14 +39,15 @@ async function fetchText(url: string) {
 
   const body = await res.text().catch(() => "");
   if (!res.ok) {
-    throw new Error(`OFAC fetch failed ${res.status} ${res.statusText} :: ${url}\n${body.slice(0, 500)}`);
+    throw new Error(
+      `OFAC fetch failed ${res.status} ${res.statusText} :: ${url}\n${body.slice(0, 500)}`
+    );
   }
   return body;
 }
 
-export default async (_req: Request, _context: Context) => {
+export default async (req: Request, _context: Context) => {
   try {
-    // Make parse import happen inside try/catch so module issues show up
     const { parse } = await import("csv-parse/sync");
 
     const store = getStore("ofac");
@@ -37,36 +57,76 @@ export default async (_req: Request, _context: Context) => {
     const sdnCsv = await fetchText(sdnUrl);
 
     const rows = parse(sdnCsv, {
-        columns: (header: string) => header.trim().toLowerCase(), // <-- normalize headers
-        skip_empty_lines: true,
-        bom: true,
-        relax_quotes: true,
-        relax_column_count: true,
-        trim: true,
+      columns: (h: string) => normalizeHeader(h),
+      skip_empty_lines: true,
+      bom: true,
+      relax_quotes: true,
+      relax_column_count: true,
+      trim: true,
     }) as Array<Record<string, string>>;
 
-    const entities = rows    .map((row) => {
-    const uid = row["ent_num"] || row["uid"];          // now normalized
-    const name = row["sdn_name"] || row["name"];       // now normalized
-    const type = row["sdn_type"] || row["type"];
-    const program = row["program"] || "";
-    const remarks = row["remarks"] || "";
+    // Debug mode: show real headers + sample row so we can confirm mapping
+    const url = new URL(req.url);
+    if (url.searchParams.get("debug") === "1") {
+      return new Response(
+        JSON.stringify(
+          {
+            ok: true,
+            normalizedHeaders: Object.keys(rows[0] || {}),
+            sampleRow: rows[0] || null,
+            rowCount: rows.length,
+          },
+          null,
+          2
+        ),
+        { headers: { "content-type": "application/json; charset=utf-8" } }
+      );
+    }
 
-    if (!uid || !name) return null;
+    // SDN-only extraction.
+    // Header names vary; use a small set of plausible keys.
+    const UID_KEYS = ["ent_num", "entnum", "uid", "id"];
+    const NAME_KEYS = ["sdn_name", "sdnname", "name", "full_name"];
+    const TYPE_KEYS = ["sdn_type", "sdntype", "type"];
+    const PROGRAM_KEYS = ["program", "programs", "sanctions_program"];
+    const REMARKS_KEYS = ["remarks", "comment", "comments"];
 
-    return {
-      uid: String(uid),
-      name: String(name),
-      type: type ? String(type) : undefined,
-      programs: program
-        ? String(program).split(/[,;]+/).map(s => s.trim()).filter(Boolean)
-        : [],
-      remarks: remarks ? String(remarks) : undefined,
-      aka: [],
-      addresses: [],
-    };
-  })
-  .filter(Boolean);
+    const entities = rows
+      .map((row) => {
+        const uid = firstDefined(row, UID_KEYS);
+        const name = firstDefined(row, NAME_KEYS);
+        if (!uid || !name) return null;
+
+        const type = firstDefined(row, TYPE_KEYS);
+        const programRaw = firstDefined(row, PROGRAM_KEYS) || "";
+        const remarks = firstDefined(row, REMARKS_KEYS);
+
+        return {
+          uid: String(uid),
+          name: String(name),
+          type: type ? String(type) : undefined,
+          programs: programRaw
+            ? String(programRaw)
+                .split(/[,;]+/)
+                .map((s) => s.trim())
+                .filter(Boolean)
+            : [],
+          remarks: remarks ? String(remarks) : undefined,
+          // kept for future compatibility with your other endpoints
+          aka: [] as string[],
+          addresses: [] as Array<{ address?: string; city?: string; country?: string }>,
+        };
+      })
+      .filter(Boolean) as Array<{
+      uid: string;
+      name: string;
+      type?: string;
+      programs: string[];
+      remarks?: string;
+      aka: string[];
+      addresses: Array<{ address?: string; city?: string; country?: string }>;
+    }>;
+
     const payloadJson = JSON.stringify(entities);
     const payloadGz = zlib.gzipSync(Buffer.from(payloadJson, "utf8"));
 
@@ -88,7 +148,6 @@ export default async (_req: Request, _context: Context) => {
   } catch (err: any) {
     console.error("ofac-update failed:", err?.stack || err);
 
-    // Return JSON so you see the actual reason, not Netlify’s generic 500
     return new Response(
       JSON.stringify({
         ok: false,
@@ -102,3 +161,4 @@ export default async (_req: Request, _context: Context) => {
 export const config: Config = {
   schedule: "0 */6 * * *",
 };
+
