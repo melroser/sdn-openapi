@@ -43,3 +43,4 @@ Thumbs.db
 .netlify/
 
 .vscode/
+.vscode/settings.json
