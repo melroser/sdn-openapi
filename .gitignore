@@ -42,4 +42,4 @@ Thumbs.db
 # Netlify
 .netlify/
 
-.vscode
+.vscode/

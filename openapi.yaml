@@ -1,54 +1,276 @@
 openapi: 3.1.0
 info:
-  title: OFAC SDN JSON Wrapper API (Netlify)
+  title: OFAC SDN JSON Wrapper API
   version: 1.0.0
   description: >
-    Unofficial JSON wrapper for OFAC Sanctions List Service exports. Data source is OFAC SLS exports.
+    Unofficial JSON wrapper for OFAC Sanctions List Service exports. This API provides
+    access to U.S. Treasury sanctions data through a modern, developer-friendly interface.
+    Data source is OFAC SLS exports.
+  contact:
+    name: devs.miami
+    url: https://devs.miami
+  license:
+    name: MIT
 servers:
   - url: https://YOUR-SITE.netlify.app
+    description: Production server
+tags:
+  - name: Search
+    description: Search and query operations
+  - name: Entity
+    description: Entity retrieval operations
+  - name: Metadata
+    description: Dataset information
+  - name: Admin
+    description: Administrative operations
 paths:
   /api/meta:
     get:
-      summary: Dataset metadata
+      tags:
+        - Metadata
+      summary: Get dataset metadata
+      description: Retrieve information about the current dataset including last update time and record count
+      operationId: getMeta
       responses:
         "200":
-          description: OK
+          description: Metadata retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lastUpdated:
+                    type: string
+                    format: date-time
+                    description: ISO 8601 timestamp of last data refresh
+                  recordCount:
+                    type: integer
+                    description: Total number of entities in the dataset
+                  version:
+                    type: string
+                    description: API version
+                required:
+                  - lastUpdated
+                  - recordCount
+                  - version
+              example:
+                lastUpdated: "2024-01-13T00:00:00Z"
+                recordCount: 12345
+                version: "1.0.0"
   /api/search:
     get:
-      summary: Fuzzy search SDN entities by name/AKA
+      tags:
+        - Search
+      summary: Fuzzy search SDN entities
+      description: Search for entities in the OFAC sanctions list by name or alias using fuzzy matching
+      operationId: searchEntities
       parameters:
         - in: query
           name: q
           required: true
-          schema: { type: string }
+          schema:
+            type: string
+            minLength: 1
+          description: Search query string (name or alias)
+          example: "Vladimir"
         - in: query
           name: limit
           required: false
-          schema: { type: integer, default: 20, maximum: 50 }
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 50
+          description: Maximum number of results to return
+          example: 10
       responses:
         "200":
-          description: OK
+          description: Search results retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        uid:
+                          type: string
+                          description: Unique entity identifier
+                        name:
+                          type: string
+                          description: Primary entity name
+                        type:
+                          type: string
+                          enum: [Individual, Entity]
+                          description: Entity type
+                        score:
+                          type: number
+                          format: float
+                          description: Match score (0-1)
+                      required:
+                        - uid
+                        - name
+                        - type
+                        - score
+                  total:
+                    type: integer
+                    description: Total number of matches found
+                required:
+                  - results
+                  - total
+              example:
+                results:
+                  - uid: "12345"
+                    name: "Vladimir Putin"
+                    type: "Individual"
+                    score: 0.98
+                  - uid: "12346"
+                    name: "Vladimir Sokolov"
+                    type: "Individual"
+                    score: 0.85
+                total: 2
         "400":
-          description: Missing query
+          description: Bad request - missing or invalid query parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  code:
+                    type: string
+              example:
+                error: "Missing required parameter: q"
+                code: "MISSING_QUERY"
   /api/entity/{uid}:
     get:
-      summary: Get entity details by UID (ent_num)
+      tags:
+        - Entity
+      summary: Get entity details
+      description: Retrieve complete details for a specific entity by its unique identifier
+      operationId: getEntity
       parameters:
         - in: path
           name: uid
           required: true
-          schema: { type: string }
+          schema:
+            type: string
+          description: Entity unique identifier (ent_num)
+          example: "12345"
       responses:
         "200":
-          description: OK
+          description: Entity details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uid:
+                    type: string
+                  name:
+                    type: string
+                  type:
+                    type: string
+                    enum: [Individual, Entity]
+                  aliases:
+                    type: array
+                    items:
+                      type: string
+                  addresses:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        city:
+                          type: string
+                        country:
+                          type: string
+                  dateOfBirth:
+                    type: string
+                    format: date
+                    nullable: true
+                  placeOfBirth:
+                    type: string
+                    nullable: true
+                required:
+                  - uid
+                  - name
+                  - type
+              example:
+                uid: "12345"
+                name: "Vladimir Putin"
+                type: "Individual"
+                aliases:
+                  - "Wladimir Putin"
+                  - "Vladimir Vladimirovich Putin"
+                addresses:
+                  - address: "Kremlin"
+                    city: "Moscow"
+                    country: "Russia"
+                dateOfBirth: "1952-10-01"
+                placeOfBirth: "Leningrad"
         "404":
-          description: Not found
+          description: Entity not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  code:
+                    type: string
+              example:
+                error: "Entity not found"
+                code: "NOT_FOUND"
   /api/update:
     post:
-      summary: (Optional) Trigger refresh manually
+      tags:
+        - Admin
+      summary: Trigger manual dataset refresh
       description: >
-        This endpoint exists if you deploy the scheduled function as an HTTP function too.
-        If you want it locked down, require a shared secret header.
+        Manually trigger a refresh of the OFAC dataset. This endpoint is optional and may require
+        authentication via a shared secret header. Useful for keeping data current between scheduled updates.
+      operationId: triggerUpdate
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                secret:
+                  type: string
+                  description: Optional shared secret for authentication
       responses:
         "200":
-          description: OK
+          description: Update triggered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                status: "success"
+                message: "Dataset refresh initiated"
+        "401":
+          description: Unauthorized - invalid or missing secret
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: "Unauthorized"
