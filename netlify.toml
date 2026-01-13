@@ -2,7 +2,25 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+[build]
+  ignore = "netlify/functions/**/*.test.ts"
+
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/ofac-:splat"
+  from = "/api/entity/*"
+  to = "/.netlify/functions/ofac-entity"
+  status = 200
+
+[[redirects]]
+  from = "/api/search/*"
+  to = "/.netlify/functions/ofac-search"
+  status = 200
+
+[[redirects]]
+  from = "/api/meta/*"
+  to = "/.netlify/functions/ofac-meta"
+  status = 200
+
+[[redirects]]
+  from = "/api/update/*"
+  to = "/.netlify/functions/ofac-update"
   status = 200
