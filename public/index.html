@@ -1,8 +1,467 @@
-<!doctype html>
-<html>
-  <head><meta charset="utf-8"><title>OFAC SDN API</title></head>
-  <body>
-    <h1>OFAC SDN API</h1>
-    <p>Try <code>/api/meta</code> or <code>/api/search?q=...</code></p>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OFAC API: Serverless Sanctions Data Access | OFAC API</title>
+  <meta name="description" content="Professional documentation for the OFAC API by devs.miami">
+  <style>
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #1a1a2e;
+      --secondary-color: #16213e;
+      --accent-color: #00d4ff;
+      --text-color: #ffffff;
+      --text-secondary: #b0b0b0;
+      --bg-color: #0f3460;
+      --font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+      --heading-font: 'Poppins', 'Inter', sans-serif;
+      --code-font: 'Fira Code', 'Courier New', monospace;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Navigation */
+    .navbar {
+      background-color: var(--primary-color);
+      border-bottom: 2px solid var(--accent-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 20px;
+    }
+
+    .nav-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--accent-color);
+    }
+
+    .logo {
+      font-family: var(--heading-font);
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      color: var(--text-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      color: var(--accent-color);
+    }
+
+    /* Main Content */
+    main {
+      min-height: calc(100vh - 200px);
+      padding: 3rem 20px;
+    }
+
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* API Docs Container */
+    .api-docs-container {
+      min-height: calc(100vh - 200px);
+      padding: 0;
+      background-color: var(--bg-color);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--heading-font);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: var(--accent-color);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-top: 0;
+    }
+
+    h2 {
+      font-size: 2rem;
+      border-bottom: 2px solid var(--accent-color);
+      padding-bottom: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+    }
+
+    a {
+      color: var(--accent-color);
+      text-decoration: none;
+      transition: opacity 0.3s ease;
+    }
+
+    a:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    /* Code Blocks */
+    pre {
+      background-color: var(--primary-color);
+      border-left: 4px solid var(--accent-color);
+      padding: 1rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+      border-radius: 4px;
+    }
+
+    code {
+      font-family: var(--code-font);
+      font-size: 0.9rem;
+    }
+
+    pre code {
+      background-color: transparent;
+      color: var(--text-color);
+    }
+
+    p code {
+      background-color: var(--primary-color);
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      color: var(--accent-color);
+    }
+
+    /* Lists */
+    ul, ol {
+      margin-left: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Blockquotes */
+    blockquote {
+      border-left: 4px solid var(--accent-color);
+      padding-left: 1rem;
+      margin: 1rem 0;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    th, td {
+      border: 1px solid var(--secondary-color);
+      padding: 0.75rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: var(--primary-color);
+      color: var(--accent-color);
+      font-weight: bold;
+    }
+
+    /* Footer */
+    .footer {
+      background-color: var(--primary-color);
+      border-top: 2px solid var(--accent-color);
+      padding: 2rem 20px;
+      margin-top: 3rem;
+    }
+
+    .footer-content {
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
+    .footer-content p {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        gap: 1rem;
+        font-size: 0.9rem;
+      }
+
+      main {
+        padding: 2rem 10px;
+      }
+
+      pre {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      h2 {
+        font-size: 1.2rem;
+      }
+
+      .navbar .container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .nav-link {
+        display: block;
+      }
+    }
+
+    /* Syntax Highlighting */
+    .hljs {
+      color: var(--text-color);
+    }
+
+    .hljs-string { color: #7ec699; }
+    .hljs-number { color: #ff9999; }
+    .hljs-literal { color: #ff9999; }
+    .hljs-attr { color: #7ec699; }
+    .hljs-variable { color: var(--accent-color); }
+    .hljs-template-variable { color: var(--accent-color); }
+    .hljs-tag { color: var(--accent-color); }
+    .hljs-name { color: var(--accent-color); }
+    .hljs-type { color: var(--accent-color); }
+    .hljs-attribute { color: #7ec699; }
+    .hljs-regexp { color: #ff9999; }
+    .hljs-link { color: #7ec699; }
+    .hljs-symbol { color: #ff9999; }
+    .hljs-bullet { color: #ff9999; }
+    .hljs-built_in { color: var(--accent-color); }
+    .hljs-builtin-name { color: var(--accent-color); }
+    .hljs-meta { color: var(--text-secondary); }
+    .hljs-deletion { color: #ff9999; }
+    .hljs-addition { color: #7ec699; }
+    .hljs-emphasis { font-style: italic; }
+    .hljs-strong { font-weight: bold; }
+  
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <span class="logo">devs.miami</span>
+      </div>
+      <div class="nav-links">
+        <a href="/api-docs.html" class="nav-link">API Docs</a><a href="/usage-guide.html" class="nav-link">Usage Guide</a><a href="/about.html" class="nav-link">About</a><a href="https://github.com" class="nav-link">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <article class="content">
+      <h1>OFAC API: Serverless Sanctions Data Access</h1>
+<h2>Hero Section</h2>
+<p>Welcome to the OFAC API—a modern, serverless proof-of-concept for accessing U.S. Treasury sanctions data in real-time. Built with cutting-edge cloud technology, this project demonstrates how to efficiently query and integrate OFAC compliance data into your applications.</p>
+<p><strong>Explore the power of serverless architecture combined with critical compliance data.</strong></p>
+<hr>
+<h2>Key Features</h2>
+<h3>⚡ Serverless Architecture</h3>
+<p>Built on Netlify Functions for instant scalability, zero infrastructure management, and pay-per-use pricing. Deploy once, scale infinitely.</p>
+<h3>🔍 Fuzzy Search</h3>
+<p>Powerful full-text search with fuzzy matching to find entities even with partial or misspelled names. Get results in milliseconds.</p>
+<h3>📊 Real-Time Data</h3>
+<p>Automatically updated OFAC sanctions list. Stay compliant with the latest designations and removals from the U.S. Treasury.</p>
+<h3>🛡️ Production-Ready</h3>
+<p>Comprehensive error handling, rate limiting, and security best practices built in from day one.</p>
+<h3>📚 Complete Documentation</h3>
+<p>Interactive API documentation, usage guides, and code examples in JavaScript, Python, and cURL.</p>
+<h3>🚀 Easy Integration</h3>
+<p>RESTful API with simple, intuitive endpoints. Integrate in minutes, not days.</p>
+<hr>
+<h2>About devs.miami</h2>
+<p><strong>devs.miami</strong> is a software engineering company founded by <strong>Robert Melrose</strong>, focused on building innovative solutions that solve real-world problems. We specialize in:</p>
+<ul>
+<li><strong>Cloud Architecture</strong>: Designing scalable, serverless systems</li>
+<li><strong>API Development</strong>: Building robust, well-documented APIs</li>
+<li><strong>Full-Stack Solutions</strong>: From backend to frontend, we deliver complete systems</li>
+<li><strong>Proof of Concepts</strong>: Demonstrating technical feasibility and best practices</li>
+</ul>
+<h3>Robert Melrose</h3>
+<p>Robert Melrose is a software engineer and founder with extensive experience in cloud architecture, API design, and full-stack development. His work demonstrates a commitment to clean code, best practices, and solving complex technical challenges with elegant solutions.</p>
+<p><strong>Expertise:</strong></p>
+<ul>
+<li>Serverless Architecture (AWS Lambda, Netlify Functions)</li>
+<li>API Design and Development</li>
+<li>Full-Stack JavaScript/TypeScript</li>
+<li>Cloud Infrastructure and DevOps</li>
+<li>Real-time Data Processing</li>
+</ul>
+<hr>
+<h2>Quick Start</h2>
+<h3>Get Started in 3 Steps</h3>
+<p><strong>1. Explore the API</strong><br>Visit our API Documentation to see all available endpoints and try them out interactively.</p>
+<p><strong>2. Read the Usage Guide</strong><br>Check out the Usage Guide for code examples and common use cases.</p>
+<p><strong>3. Integrate</strong><br>Use the provided code examples to integrate OFAC data into your application.</p>
+<hr>
+<h2>API Endpoints</h2>
+<h3>Search Entities</h3>
+<p>GET /api/search?q=query</p>
+<p>Search for OFAC-designated entities by name with fuzzy matching.</p>
+<h3>Get Entity Details</h3>
+<p>GET /api/entity/{uid}</p>
+<p>Retrieve complete details for a specific entity.</p>
+<h3>Check Metadata</h3>
+<p>GET /api/meta</p>
+<p>Get information about the dataset, including last update time and record count.</p>
+<h3>Trigger Update</h3>
+<p>POST /api/update</p>
+<p>Manually trigger a refresh of the OFAC data (admin only).</p>
+<hr>
+<h2>Why This Project?</h2>
+<p>This proof-of-concept was born from real-world experience with compliance requirements. Many organizations struggle with:</p>
+<ul>
+<li><strong>Outdated Data</strong>: Manual updates that fall out of sync</li>
+<li><strong>Complex Integration</strong>: Difficult APIs and poor documentation</li>
+<li><strong>Scalability Issues</strong>: Systems that can&#39;t handle traffic spikes</li>
+<li><strong>High Costs</strong>: Expensive infrastructure for simple queries</li>
+</ul>
+<p>The OFAC API solves these problems with a modern, serverless approach that&#39;s:</p>
+<ul>
+<li><strong>Always Current</strong>: Automatically updated</li>
+<li><strong>Easy to Use</strong>: Simple, well-documented API</li>
+<li><strong>Infinitely Scalable</strong>: Handles any traffic volume</li>
+<li><strong>Cost-Effective</strong>: Pay only for what you use</li>
+</ul>
+<hr>
+<h2>Technical Highlights</h2>
+<h3>Serverless Architecture</h3>
+<p>Built entirely on Netlify Functions, eliminating the need for server management. Functions scale automatically and you only pay for execution time.</p>
+<h3>Efficient Data Storage</h3>
+<p>OFAC data is stored in Netlify Blobs for fast, reliable access. The system automatically handles data compression and retrieval.</p>
+<h3>Fuzzy Search</h3>
+<p>Powered by Fuse.js, the search engine provides intelligent matching even with typos and partial names.</p>
+<h3>Real-Time Updates</h3>
+<p>Scheduled functions automatically fetch the latest OFAC data from the U.S. Treasury, ensuring your data is always current.</p>
+<h3>Production-Ready Error Handling</h3>
+<p>Comprehensive error handling, validation, and logging ensure reliability in production environments.</p>
+<hr>
+<h2>Use Cases</h2>
+<h3>Compliance Screening</h3>
+<p>Automatically screen customers, vendors, and counterparties against OFAC sanctions lists.</p>
+<h3>Risk Management</h3>
+<p>Integrate OFAC data into your risk management systems for real-time compliance monitoring.</p>
+<h3>Due Diligence</h3>
+<p>Streamline your due diligence process with fast, accurate OFAC searches.</p>
+<h3>Regulatory Reporting</h3>
+<p>Use the API to gather data for regulatory compliance reports and audits.</p>
+<hr>
+<h2>Get Involved</h2>
+<h3>Explore the Code</h3>
+<p>The entire project is open source. Check out the GitHub repository to see how it&#39;s built.</p>
+<h3>Learn More</h3>
+<p>Visit devs.miami to learn about our other projects and services.</p>
+<h3>Contact Us</h3>
+<p>Interested in consulting, custom development, or discussing your compliance challenges? Get in touch.</p>
+<hr>
+<h2>Technology Stack</h2>
+<ul>
+<li><strong>Runtime</strong>: Node.js</li>
+<li><strong>Hosting</strong>: Netlify Functions</li>
+<li><strong>Data Storage</strong>: Netlify Blobs</li>
+<li><strong>Search</strong>: Fuse.js</li>
+<li><strong>API Documentation</strong>: OpenAPI/Swagger</li>
+<li><strong>Frontend</strong>: Static HTML/CSS</li>
+<li><strong>Version Control</strong>: Git/GitHub</li>
+</ul>
+<hr>
+<h2>License</h2>
+<p>This project is provided as a proof-of-concept demonstration. See the repository for license details.</p>
+<hr>
+<h2>Next Steps</h2>
+<p>Ready to get started? Choose your next step:</p>
+<ul>
+<li><strong>Explore the API</strong> - Interactive API documentation</li>
+<li><strong>Read the Usage Guide</strong> - Code examples and tutorials</li>
+<li><strong>Learn More About Us</strong> - Our story and approach</li>
+<li><strong>View on GitHub</strong> - Source code and contributions</li>
+</ul>
+<hr>
+<p>Built with love by devs.miami</p>
+
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <p>&copy; 2024 devs.miami. All rights reserved.</p>
+        <p>Built by <strong>Robert Melrose</strong></p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    
+    // Syntax highlighting is applied during build time
+    // This script is a placeholder for any runtime enhancements
+    console.log('Documentation site loaded');
+  
+  </script>
+</body>
 </html>

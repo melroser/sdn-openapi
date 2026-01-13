@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About the OFAC API | OFAC API</title>
+  <meta name="description" content="Professional documentation for the OFAC API by devs.miami">
+  <style>
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #1a1a2e;
+      --secondary-color: #16213e;
+      --accent-color: #00d4ff;
+      --text-color: #ffffff;
+      --text-secondary: #b0b0b0;
+      --bg-color: #0f3460;
+      --font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+      --heading-font: 'Poppins', 'Inter', sans-serif;
+      --code-font: 'Fira Code', 'Courier New', monospace;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Navigation */
+    .navbar {
+      background-color: var(--primary-color);
+      border-bottom: 2px solid var(--accent-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 20px;
+    }
+
+    .nav-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--accent-color);
+    }
+
+    .logo {
+      font-family: var(--heading-font);
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      color: var(--text-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      color: var(--accent-color);
+    }
+
+    /* Main Content */
+    main {
+      min-height: calc(100vh - 200px);
+      padding: 3rem 20px;
+    }
+
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* API Docs Container */
+    .api-docs-container {
+      min-height: calc(100vh - 200px);
+      padding: 0;
+      background-color: var(--bg-color);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--heading-font);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: var(--accent-color);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-top: 0;
+    }
+
+    h2 {
+      font-size: 2rem;
+      border-bottom: 2px solid var(--accent-color);
+      padding-bottom: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+    }
+
+    a {
+      color: var(--accent-color);
+      text-decoration: none;
+      transition: opacity 0.3s ease;
+    }
+
+    a:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    /* Code Blocks */
+    pre {
+      background-color: var(--primary-color);
+      border-left: 4px solid var(--accent-color);
+      padding: 1rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+      border-radius: 4px;
+    }
+
+    code {
+      font-family: var(--code-font);
+      font-size: 0.9rem;
+    }
+
+    pre code {
+      background-color: transparent;
+      color: var(--text-color);
+    }
+
+    p code {
+      background-color: var(--primary-color);
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      color: var(--accent-color);
+    }
+
+    /* Lists */
+    ul, ol {
+      margin-left: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Blockquotes */
+    blockquote {
+      border-left: 4px solid var(--accent-color);
+      padding-left: 1rem;
+      margin: 1rem 0;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    th, td {
+      border: 1px solid var(--secondary-color);
+      padding: 0.75rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: var(--primary-color);
+      color: var(--accent-color);
+      font-weight: bold;
+    }
+
+    /* Footer */
+    .footer {
+      background-color: var(--primary-color);
+      border-top: 2px solid var(--accent-color);
+      padding: 2rem 20px;
+      margin-top: 3rem;
+    }
+
+    .footer-content {
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
+    .footer-content p {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        gap: 1rem;
+        font-size: 0.9rem;
+      }
+
+      main {
+        padding: 2rem 10px;
+      }
+
+      pre {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      h2 {
+        font-size: 1.2rem;
+      }
+
+      .navbar .container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .nav-link {
+        display: block;
+      }
+    }
+
+    /* Syntax Highlighting */
+    .hljs {
+      color: var(--text-color);
+    }
+
+    .hljs-string { color: #7ec699; }
+    .hljs-number { color: #ff9999; }
+    .hljs-literal { color: #ff9999; }
+    .hljs-attr { color: #7ec699; }
+    .hljs-variable { color: var(--accent-color); }
+    .hljs-template-variable { color: var(--accent-color); }
+    .hljs-tag { color: var(--accent-color); }
+    .hljs-name { color: var(--accent-color); }
+    .hljs-type { color: var(--accent-color); }
+    .hljs-attribute { color: #7ec699; }
+    .hljs-regexp { color: #ff9999; }
+    .hljs-link { color: #7ec699; }
+    .hljs-symbol { color: #ff9999; }
+    .hljs-bullet { color: #ff9999; }
+    .hljs-built_in { color: var(--accent-color); }
+    .hljs-builtin-name { color: var(--accent-color); }
+    .hljs-meta { color: var(--text-secondary); }
+    .hljs-deletion { color: #ff9999; }
+    .hljs-addition { color: #7ec699; }
+    .hljs-emphasis { font-style: italic; }
+    .hljs-strong { font-weight: bold; }
+  
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <span class="logo">devs.miami</span>
+      </div>
+      <div class="nav-links">
+        <a href="/api-docs.html" class="nav-link">API Docs</a><a href="/usage-guide.html" class="nav-link">Usage Guide</a><a href="/about.html" class="nav-link">About</a><a href="https://github.com" class="nav-link">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <article class="content">
+      <h1>About the OFAC API</h1>
+<h2>The Story Behind This Project</h2>
+<p>The OFAC API was born from real-world experience with compliance challenges. In today&#39;s global business environment, organizations must screen customers, vendors, and counterparties against U.S. Treasury sanctions lists. This is not optional—it&#39;s a legal requirement for financial institutions, payment processors, and many other businesses.</p>
+<p>However, accessing and integrating OFAC data has traditionally been difficult. Existing solutions are often outdated, expensive, or require complex integration work. This proof-of-concept demonstrates that modern cloud architecture can solve these problems elegantly.</p>
+<hr>
+<h2>The Technical Challenge</h2>
+<h3>The Problem</h3>
+<p>When we started working on compliance solutions, we encountered several persistent challenges:</p>
+<ol>
+<li><p><strong>Data Freshness</strong>: OFAC updates its sanctions list regularly, but many systems rely on manually updated data that quickly becomes stale.</p>
+</li>
+<li><p><strong>Integration Complexity</strong>: Existing OFAC data sources require complex ETL processes, custom parsing, and significant infrastructure investment.</p>
+</li>
+<li><p><strong>Scalability Issues</strong>: Traditional approaches struggle with traffic spikes. A compliance check that takes 5 seconds during normal load might take 30 seconds during peak times.</p>
+</li>
+<li><p><strong>Cost</strong>: Building and maintaining compliance infrastructure is expensive. Servers must run 24/7, even during periods of low usage.</p>
+</li>
+<li><p><strong>Developer Experience</strong>: Poor documentation and unintuitive APIs make integration time-consuming and error-prone.</p>
+</li>
+</ol>
+<h3>Our Solution</h3>
+<p>The OFAC API demonstrates how modern serverless architecture solves these problems:</p>
+<ul>
+<li><p><strong>Automatic Updates</strong>: Scheduled functions fetch the latest OFAC data from the U.S. Treasury, ensuring data is always current.</p>
+</li>
+<li><p><strong>Efficient Storage</strong>: OFAC data is stored in Netlify Blobs, providing fast, reliable access without managing databases.</p>
+</li>
+<li><p><strong>Intelligent Search</strong>: Powered by Fuse.js, the search engine provides fuzzy matching that handles typos and partial names.</p>
+</li>
+<li><p><strong>Infinite Scalability</strong>: Netlify Functions automatically scale from zero to thousands of concurrent requests without any configuration.</p>
+</li>
+<li><p><strong>Pay-Per-Use Pricing</strong>: You only pay for the compute time you actually use, not for idle servers.</p>
+</li>
+<li><p><strong>Developer-Friendly</strong>: Clear documentation, interactive API explorer, and code examples in multiple languages.</p>
+</li>
+</ul>
+<hr>
+<h2>Architectural Decisions</h2>
+<h3>Why Serverless?</h3>
+<p>We chose serverless architecture (Netlify Functions) for several reasons:</p>
+<ol>
+<li><p><strong>No Infrastructure Management</strong>: Deploy code, not servers. Netlify handles scaling, security, and maintenance.</p>
+</li>
+<li><p><strong>Cost Efficiency</strong>: With traditional servers, you pay for capacity. With serverless, you pay for usage. For compliance APIs with variable traffic, this is significantly cheaper.</p>
+</li>
+<li><p><strong>Automatic Scaling</strong>: Traffic spikes are handled automatically. No need to provision capacity in advance or worry about overload.</p>
+</li>
+<li><p><strong>Built-in Security</strong>: Netlify provides DDoS protection, SSL/TLS, and security best practices out of the box.</p>
+</li>
+<li><p><strong>Fast Deployment</strong>: Changes deploy instantly. No waiting for servers to start or configuration to propagate.</p>
+</li>
+</ol>
+<h3>Why Netlify Blobs?</h3>
+<p>We chose Netlify Blobs for data storage because:</p>
+<ol>
+<li><p><strong>Integrated</strong>: No need to manage separate databases. Blobs integrate seamlessly with Netlify Functions.</p>
+</li>
+<li><p><strong>Fast Access</strong>: Blobs are optimized for read-heavy workloads, perfect for compliance data that changes infrequently.</p>
+</li>
+<li><p><strong>Automatic Compression</strong>: Data is automatically compressed, reducing storage costs and improving performance.</p>
+</li>
+<li><p><strong>Simple API</strong>: The Blobs API is straightforward and requires minimal code.</p>
+</li>
+</ol>
+<h3>Why Fuse.js for Search?</h3>
+<p>Fuse.js provides fuzzy search capabilities that are essential for compliance screening:</p>
+<ol>
+<li><p><strong>Typo Tolerance</strong>: Finds matches even with misspelled names.</p>
+</li>
+<li><p><strong>Partial Matching</strong>: Works with incomplete names or aliases.</p>
+</li>
+<li><p><strong>Relevance Scoring</strong>: Results are ranked by relevance, so the best matches appear first.</p>
+</li>
+<li><p><strong>Lightweight</strong>: Runs entirely in JavaScript with no external dependencies.</p>
+</li>
+<li><p><strong>Battle-Tested</strong>: Used by thousands of projects and proven in production.</p>
+</li>
+</ol>
+<h3>Why Static Site Generation?</h3>
+<p>Documentation is generated from markdown because:</p>
+<ol>
+<li><p><strong>Version Control</strong>: Documentation lives in Git alongside code, making it easy to track changes.</p>
+</li>
+<li><p><strong>Easy Updates</strong>: Markdown is simple to write and edit. No need to manage HTML directly.</p>
+</li>
+<li><p><strong>Consistency</strong>: All pages use the same styling and branding automatically.</p>
+</li>
+<li><p><strong>Performance</strong>: Static HTML is fast and requires no server-side processing.</p>
+</li>
+<li><p><strong>Accessibility</strong>: Markdown-based documentation is inherently accessible and SEO-friendly.</p>
+</li>
+</ol>
+<hr>
+<h2>Key Design Principles</h2>
+<h3>1. Simplicity First</h3>
+<p>Every design decision prioritizes simplicity. The API has just four endpoints, each with a clear purpose. The codebase is straightforward and easy to understand.</p>
+<h3>2. Real-World Compliance</h3>
+<p>The API is designed for real compliance use cases. It handles the specific requirements of OFAC screening, including fuzzy matching, entity types, and detailed entity information.</p>
+<h3>3. Developer Experience</h3>
+<p>We believe developers should enjoy using an API. Clear documentation, interactive examples, and helpful error messages make integration straightforward.</p>
+<h3>4. Production Ready</h3>
+<p>This is not a toy project. The API includes comprehensive error handling, rate limiting, logging, and security best practices.</p>
+<h3>5. Cost Conscious</h3>
+<p>We designed the system to be cost-effective. Serverless architecture means you only pay for what you use, not for idle capacity.</p>
+<h3>6. Open and Transparent</h3>
+<p>The entire project is open source. You can see exactly how it works, audit the code, and contribute improvements.</p>
+<hr>
+<h2>Technical Highlights</h2>
+<h3>Automated Data Updates</h3>
+<p>A scheduled function runs daily to fetch the latest OFAC data from the U.S. Treasury. The data is parsed, indexed, and stored in Netlify Blobs. This ensures your compliance data is always current.</p>
+<pre><code class="hljs language-plaintext">Daily Schedule
+    ↓
+Fetch OFAC Data
+    ↓
+Parse &amp; Index
+    ↓
+Store in Blobs
+    ↓
+API Ready</code></pre><h3>Fuzzy Search Engine</h3>
+<p>The search engine uses Fuse.js to provide intelligent matching:</p>
+<ul>
+<li><strong>Typo Tolerance</strong>: &quot;Vladmir Putin&quot; finds &quot;Vladimir Putin&quot;</li>
+<li><strong>Partial Matching</strong>: &quot;Putin&quot; finds &quot;Vladimir Putin&quot;</li>
+<li><strong>Relevance Scoring</strong>: Results ranked by match quality</li>
+<li><strong>Fast</strong>: Searches complete in milliseconds</li>
+</ul>
+<h3>Entity Details</h3>
+<p>When you retrieve an entity, you get comprehensive information:</p>
+<ul>
+<li>Full name and aliases</li>
+<li>Entity type (Individual, Entity, Aircraft, Vessel)</li>
+<li>Date and place of birth (for individuals)</li>
+<li>Addresses and contact information</li>
+<li>Sanctions program information</li>
+<li>Listing date and other metadata</li>
+</ul>
+<h3>Rate Limiting</h3>
+<p>The API implements intelligent rate limiting:</p>
+<ul>
+<li><strong>Search</strong>: 100 requests per minute per IP</li>
+<li><strong>Entity Details</strong>: 100 requests per minute per IP</li>
+<li><strong>Metadata</strong>: 1000 requests per minute per IP</li>
+</ul>
+<p>Rate limits are generous enough for real-world use while preventing abuse.</p>
+<h3>Error Handling</h3>
+<p>Comprehensive error handling ensures reliability:</p>
+<ul>
+<li><strong>Validation</strong>: Invalid requests are rejected with clear error messages</li>
+<li><strong>Not Found</strong>: Missing entities return 404 with helpful information</li>
+<li><strong>Rate Limits</strong>: Rate limit responses include retry-after headers</li>
+<li><strong>Server Errors</strong>: Rare errors are logged and monitored</li>
+</ul>
+<hr>
+<h2>Lessons Learned</h2>
+<h3>1. Serverless is Production-Ready</h3>
+<p>We initially had concerns about serverless for compliance APIs. In practice, Netlify Functions proved to be reliable, scalable, and cost-effective. The automatic scaling handles traffic spikes effortlessly.</p>
+<h3>2. Fuzzy Search is Essential</h3>
+<p>Early versions used exact matching. We quickly learned that compliance screening requires fuzzy matching. Users search for &quot;Vladmir Putin&quot; (typo), &quot;Putin&quot; (partial), and &quot;V. Putin&quot; (abbreviated). Fuzzy search handles all these cases.</p>
+<h3>3. Documentation Matters</h3>
+<p>The difference between a well-documented API and a poorly-documented one is enormous. Clear examples, interactive documentation, and helpful error messages dramatically improve developer experience.</p>
+<h3>4. Caching is Crucial</h3>
+<p>OFAC data changes infrequently (typically daily). Implementing caching on the client side dramatically reduces API calls and improves performance.</p>
+<h3>5. Monitoring is Essential</h3>
+<p>Even with serverless, monitoring is critical. We track API response times, error rates, and usage patterns to ensure the system performs well.</p>
+<hr>
+<h2>About devs.miami</h2>
+<p><strong>devs.miami</strong> is a software engineering company founded by Robert Melrose, focused on building innovative solutions that solve real-world problems.</p>
+<h3>Our Approach</h3>
+<p>We believe in:</p>
+<ul>
+<li><strong>Clean Code</strong>: Code should be readable, maintainable, and well-tested.</li>
+<li><strong>Best Practices</strong>: We follow industry standards and proven architectural patterns.</li>
+<li><strong>User Focus</strong>: Every decision is made with the end user in mind.</li>
+<li><strong>Continuous Learning</strong>: Technology evolves rapidly. We stay current with the latest tools and techniques.</li>
+<li><strong>Open Source</strong>: We contribute to the community and believe in sharing knowledge.</li>
+</ul>
+<h3>Our Expertise</h3>
+<ul>
+<li><strong>Cloud Architecture</strong>: Designing scalable, serverless systems on modern cloud platforms</li>
+<li><strong>API Development</strong>: Building robust, well-documented, production-ready APIs</li>
+<li><strong>Full-Stack Development</strong>: From backend to frontend, we deliver complete systems</li>
+<li><strong>Proof of Concepts</strong>: Demonstrating technical feasibility and best practices</li>
+<li><strong>Compliance &amp; Security</strong>: Building systems that meet regulatory requirements</li>
+</ul>
+<hr>
+<h2>About Robert Melrose</h2>
+<p>Robert Melrose is a software engineer and founder with extensive experience in cloud architecture, API design, and full-stack development. His work demonstrates a commitment to clean code, best practices, and solving complex technical challenges with elegant solutions.</p>
+<h3>Background</h3>
+<p>Robert has spent over a decade building software systems that scale. He&#39;s worked on everything from real-time data processing to compliance systems to consumer applications. This diverse experience informs his approach to architecture and design.</p>
+<h3>Expertise</h3>
+<ul>
+<li><strong>Serverless Architecture</strong>: AWS Lambda, Netlify Functions, and cloud-native design patterns</li>
+<li><strong>API Design</strong>: RESTful APIs, GraphQL, and API security</li>
+<li><strong>Full-Stack JavaScript/TypeScript</strong>: Node.js, React, and modern web development</li>
+<li><strong>Cloud Infrastructure</strong>: AWS, Netlify, and DevOps practices</li>
+<li><strong>Real-Time Data Processing</strong>: Handling high-volume data streams and complex transformations</li>
+</ul>
+<h3>Philosophy</h3>
+<p>Robert believes that great software is built on a foundation of:</p>
+<ol>
+<li><strong>Clear Requirements</strong>: Understanding the problem before building the solution</li>
+<li><strong>Thoughtful Design</strong>: Taking time to design systems that are maintainable and scalable</li>
+<li><strong>Quality Code</strong>: Writing code that is readable, tested, and follows best practices</li>
+<li><strong>User Focus</strong>: Always considering the end user&#39;s experience</li>
+<li><strong>Continuous Improvement</strong>: Learning from each project and applying those lessons to the next</li>
+</ol>
+<hr>
+<h2>Technology Stack</h2>
+<h3>Backend</h3>
+<ul>
+<li><strong>Runtime</strong>: Node.js</li>
+<li><strong>Hosting</strong>: Netlify Functions</li>
+<li><strong>Data Storage</strong>: Netlify Blobs</li>
+<li><strong>Search</strong>: Fuse.js</li>
+<li><strong>Data Source</strong>: U.S. Treasury OFAC API</li>
+</ul>
+<h3>Frontend</h3>
+<ul>
+<li><strong>Static Site Generation</strong>: Markdown to HTML</li>
+<li><strong>API Documentation</strong>: Swagger UI / ReDoc</li>
+<li><strong>Styling</strong>: CSS with responsive design</li>
+<li><strong>Hosting</strong>: Netlify Static Hosting</li>
+</ul>
+<h3>Development</h3>
+<ul>
+<li><strong>Language</strong>: TypeScript</li>
+<li><strong>Testing</strong>: Vitest</li>
+<li><strong>Version Control</strong>: Git/GitHub</li>
+<li><strong>CI/CD</strong>: Netlify Deploy Previews</li>
+</ul>
+<hr>
+<h2>Why Open Source?</h2>
+<p>We believe in transparency and community. The OFAC API is open source because:</p>
+<ol>
+<li><strong>Trust</strong>: You can audit the code and verify it does what we claim.</li>
+<li><strong>Community</strong>: Others can contribute improvements and learn from the implementation.</li>
+<li><strong>Sustainability</strong>: Open source projects benefit from community contributions and feedback.</li>
+<li><strong>Knowledge Sharing</strong>: We want to help others build better compliance systems.</li>
+</ol>
+<hr>
+<h2>The Future</h2>
+<p>This proof-of-concept demonstrates what&#39;s possible with modern cloud architecture. We&#39;re excited about the potential for:</p>
+<ul>
+<li><strong>Enhanced Search</strong>: Machine learning-based entity matching</li>
+<li><strong>Webhooks</strong>: Real-time notifications when entities are added or removed</li>
+<li><strong>Batch Processing</strong>: Screening large lists of entities efficiently</li>
+<li><strong>Multi-Jurisdiction</strong>: Supporting sanctions lists from other countries</li>
+<li><strong>Advanced Analytics</strong>: Insights into compliance screening patterns</li>
+</ul>
+<hr>
+<h2>Get Involved</h2>
+<h3>Explore the Code</h3>
+<p>The entire project is open source on GitHub. You can:</p>
+<ul>
+<li>Review the implementation</li>
+<li>Understand the architecture</li>
+<li>Contribute improvements</li>
+<li>Fork and adapt for your needs</li>
+</ul>
+<h3>Use the API</h3>
+<p>Try the OFAC API in your application:</p>
+<ul>
+<li>Read the Usage Guide for code examples</li>
+<li>Explore the interactive API documentation</li>
+<li>Integrate into your compliance workflow</li>
+</ul>
+<h3>Contact Us</h3>
+<p>Interested in consulting, custom development, or discussing your compliance challenges?</p>
+<ul>
+<li><strong>Website</strong>: <a href="https://devs.miami">devs.miami</a></li>
+<li><strong>Email</strong>: <a href="mailto:contact@devs.miami">contact@devs.miami</a></li>
+<li><strong>GitHub</strong>: <a href="https://github.com/devs-miami">devs-miami</a></li>
+</ul>
+<hr>
+<h2>Related Resources</h2>
+<ul>
+<li><a href="https://home.treasury.gov/policy-issues/financial-sanctions-and-terrorism/sanctions-programs-and-country-information">U.S. Treasury OFAC</a></li>
+<li><a href="https://sanctionslist.ofac.treas.gov/">OFAC Sanctions List</a></li>
+<li><a href="https://docs.netlify.com/functions/overview/">Netlify Functions Documentation</a></li>
+<li><a href="https://fusejs.io/">Fuse.js Documentation</a></li>
+<li><a href="https://spec.openapis.org/">OpenAPI Specification</a></li>
+</ul>
+<hr>
+<h2>License</h2>
+<p>This project is provided as a proof-of-concept demonstration. See the repository for license details.</p>
+<hr>
+<h2>Acknowledgments</h2>
+<p>This project builds on the work of many talented developers and open source projects:</p>
+<ul>
+<li><strong>Netlify</strong>: For providing an excellent serverless platform</li>
+<li><strong>Fuse.js</strong>: For powerful fuzzy search capabilities</li>
+<li><strong>U.S. Treasury</strong>: For providing OFAC data</li>
+<li><strong>The Open Source Community</strong>: For countless tools and libraries that make this possible</li>
+</ul>
+<hr>
+<p>Built with ❤️ by devs.miami</p>
+
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <p>&copy; 2024 devs.miami. All rights reserved.</p>
+        <p>Built by <strong>Robert Melrose</strong></p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    
+    // Syntax highlighting is applied during build time
+    // This script is a placeholder for any runtime enhancements
+    console.log('Documentation site loaded');
+  
+  </script>
+</body>
+</html>
