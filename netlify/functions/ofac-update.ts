@@ -2,31 +2,13 @@ import type { Config, Context } from "@netlify/functions";
 import { getStore } from "@netlify/blobs";
 import crypto from "node:crypto";
 import zlib from "node:zlib";
+import { parseCSV, extractEntities, consolidateAltData, consolidateAddData } from "./ofac-parser";
 
 const OFAC_EXPORT_BASE =
   "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports";
 
 function sha256(text: string) {
   return crypto.createHash("sha256").update(text, "utf8").digest("hex");
-}
-
-function normalizeHeader(header: string): string {
-  // Make headers consistent across variations:
-  // "Ent Num" -> "ent_num", "SDN Name" -> "sdn_name", etc.
-  return header
-    .trim()
-    .toLowerCase()
-    .replace(/\uFEFF/g, "") // strip BOM if it sneaks in
-    .replace(/[^\w\s]/g, "") // remove punctuation
-    .replace(/\s+/g, "_"); // whitespace -> underscores
-}
-
-function firstDefined(row: Record<string, string>, keys: string[]): string | undefined {
-  for (const k of keys) {
-    const v = row[k];
-    if (v !== undefined && v !== null && String(v).trim() !== "") return String(v);
-  }
-  return undefined;
 }
 
 async function fetchText(url: string) {
@@ -48,22 +30,25 @@ async function fetchText(url: string) {
 
 export default async (req: Request, _context: Context) => {
   try {
-    const { parse } = await import("csv-parse/sync");
-
     const store = getStore("ofac");
     const fetchedAt = new Date().toISOString();
 
     const sdnUrl = `${OFAC_EXPORT_BASE}/SDN.CSV`;
+    const altUrl = `${OFAC_EXPORT_BASE}/ALT.CSV`;
+    const addUrl = `${OFAC_EXPORT_BASE}/ADD.CSV`;
+
+    console.log(`[ofac-update] Fetching SDN CSV from ${sdnUrl}`);
     const sdnCsv = await fetchText(sdnUrl);
 
-    const rows = parse(sdnCsv, {
-      columns: (h: string) => normalizeHeader(h),
-      skip_empty_lines: true,
-      bom: true,
-      relax_quotes: true,
-      relax_column_count: true,
-      trim: true,
-    }) as Array<Record<string, string>>;
+    console.log(`[ofac-update] Fetching ALT CSV from ${altUrl}`);
+    const altCsv = await fetchText(altUrl);
+
+    console.log(`[ofac-update] Fetching ADD CSV from ${addUrl}`);
+    const addCsv = await fetchText(addUrl);
+
+    const sdnRows = await parseCSV(sdnCsv);
+    const altRows = await parseCSV(altCsv);
+    const addRows = await parseCSV(addCsv);
 
     // Debug mode: show real headers + sample row so we can confirm mapping
     const url = new URL(req.url);
@@ -72,9 +57,17 @@ export default async (req: Request, _context: Context) => {
         JSON.stringify(
           {
             ok: true,
-            normalizedHeaders: Object.keys(rows[0] || {}),
-            sampleRow: rows[0] || null,
-            rowCount: rows.length,
+            sdnHeaders: Object.keys(sdnRows[0] || {}),
+            altHeaders: Object.keys(altRows[0] || {}),
+            addHeaders: Object.keys(addRows[0] || {}),
+            sdnSampleRow: sdnRows[0] || null,
+            altSampleRow: altRows[0] || null,
+            addSampleRow: addRows[0] || null,
+            rowCounts: {
+              sdn: sdnRows.length,
+              alt: altRows.length,
+              add: addRows.length,
+            },
           },
           null,
           2
@@ -83,65 +76,44 @@ export default async (req: Request, _context: Context) => {
       );
     }
 
-    // SDN-only extraction.
-    // Header names vary; use a small set of plausible keys.
-    const UID_KEYS = ["ent_num", "entnum", "uid", "id"];
-    const NAME_KEYS = ["sdn_name", "sdnname", "name", "full_name"];
-    const TYPE_KEYS = ["sdn_type", "sdntype", "type"];
-    const PROGRAM_KEYS = ["program", "programs", "sanctions_program"];
-    const REMARKS_KEYS = ["remarks", "comment", "comments"];
+    // Extract entities from SDN
+    let entities = extractEntities(sdnRows);
 
-    const entities = rows
-      .map((row) => {
-        const uid = firstDefined(row, UID_KEYS);
-        const name = firstDefined(row, NAME_KEYS);
-        if (!uid || !name) return null;
+    // Consolidate ALT data (alternate names)
+    entities = consolidateAltData(entities, altRows);
 
-        const type = firstDefined(row, TYPE_KEYS);
-        const programRaw = firstDefined(row, PROGRAM_KEYS) || "";
-        const remarks = firstDefined(row, REMARKS_KEYS);
-
-        return {
-          uid: String(uid),
-          name: String(name),
-          type: type ? String(type) : undefined,
-          programs: programRaw
-            ? String(programRaw)
-                .split(/[,;]+/)
-                .map((s) => s.trim())
-                .filter(Boolean)
-            : [],
-          remarks: remarks ? String(remarks) : undefined,
-          // kept for future compatibility with your other endpoints
-          aka: [] as string[],
-          addresses: [] as Array<{ address?: string; city?: string; country?: string }>,
-        };
-      })
-      .filter(Boolean) as Array<{
-      uid: string;
-      name: string;
-      type?: string;
-      programs: string[];
-      remarks?: string;
-      aka: string[];
-      addresses: Array<{ address?: string; city?: string; country?: string }>;
-    }>;
+    // Consolidate ADD data (addresses)
+    entities = consolidateAddData(entities, addRows);
 
     const payloadJson = JSON.stringify(entities);
     const payloadGz = zlib.gzipSync(Buffer.from(payloadJson, "utf8"));
 
     const meta = {
-      list: "SDN",
-      sourceUrl: sdnUrl,
+      lists: ["SDN", "ALT", "ADD"],
+      source: {
+        sdnUrl,
+        altUrl,
+        addUrl,
+      },
       fetchedAt,
-      contentSha256: sha256(sdnCsv),
-      bytes: Buffer.byteLength(sdnCsv, "utf8"),
-      counts: { rows: rows.length, entities: entities.length },
+      counts: {
+        sdnRows: sdnRows.length,
+        altRows: altRows.length,
+        addRows: addRows.length,
+        entities: entities.length,
+      },
+      hashes: {
+        sdnSha256: sha256(sdnCsv),
+        altSha256: sha256(altCsv),
+        addSha256: sha256(addCsv),
+      },
     };
 
+    console.log(`[ofac-update] Storing ${entities.length} entities and metadata`);
     await store.set("dataset.json.gz", payloadGz, { metadata: { fetchedAt } });
     await store.setJSON("meta.json", meta, { metadata: { fetchedAt } });
 
+    console.log(`[ofac-update] Update completed successfully`);
     return new Response(JSON.stringify({ ok: true, meta }), {
       headers: { "content-type": "application/json; charset=utf-8" },
     });
