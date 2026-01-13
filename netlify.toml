@@ -3,12 +3,9 @@
   node_bundler = "esbuild"
 
 [build]
+  command = "npm run build"
+  publish = "public"
   ignore = "netlify/functions/**/*.test.ts"
-
-[[redirects]]
-  from = "/openapi.yaml"
-  to = "/openapi.yaml"
-  status = 200
 
 [[redirects]]
   from = "/api/entity/*"
@@ -29,3 +26,10 @@
   from = "/api/update/*"
   to = "/.netlify/functions/ofac-update"
   status = 200
+
+# SPA-style redirect rule for client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  condition = "!req.path.startsWith(/api) && !req.path.startsWith(/openapi) && !req.path.endsWith(.html) && !req.path.endsWith(.css) && !req.path.endsWith(.js) && !req.path.endsWith(.json) && !req.path.endsWith(.yaml)"

@@ -52,18 +52,101 @@ Robert Melrose is a software engineer and founder with extensive experience in c
 
 ---
 
+## Data Provenance & Freshness
+
+### Data Source
+
+All data comes from the **U.S. Treasury Office of Foreign Assets Control (OFAC)** Specially Designated Nationals (SDN) List.
+
+**Official OFAC Source:** [OFAC SDN Human-Readable Lists](https://home.treasury.gov/policy-guidance/financial-sanctions-and-embargoes/specially-designated-nationals-and-blocked-persons-list-sdn-human-readable-lists)
+
+### Update Frequency
+
+- **Automatic Updates**: Daily at 2 AM UTC
+- **Manual Updates**: Available on-demand via the `/api/update` endpoint
+- **Update Mechanism**: Scheduled Netlify Functions automatically fetch the latest OFAC data and store it in Netlify Blobs
+
+### Data Freshness
+
+- **Typical Freshness**: Within 24 hours of OFAC updates
+- **OFAC Publication Schedule**: Updates published on business days
+- **Processing Delay**: Approximately 1-2 hours after OFAC publication
+- **Check Last Update**: Use the `/api/meta` endpoint to retrieve the `lastUpdated` timestamp
+
+### Metadata Endpoint
+
+Get information about the current dataset:
+
+```
+GET /api/meta
+```
+
+Response includes:
+- `lastUpdated`: ISO 8601 timestamp of the last data refresh
+- `recordCount`: Total number of entities in the dataset
+- `version`: API version
+
+### Manual Update Trigger
+
+Trigger a manual data refresh:
+
+```
+POST /api/update
+```
+
+Optional request body:
+```json
+{
+  "secret": "YOUR_SECRET"
+}
+```
+
+---
+
 ## Quick Start
 
-### Get Started in 3 Steps
+Get started in 30 seconds with a working example:
 
-**1. Explore the API**
-Visit our API Documentation to see all available endpoints and try them out interactively.
+### Search for an Entity
 
-**2. Read the Usage Guide**
-Check out the Usage Guide for code examples and common use cases.
+**cURL:**
+```bash
+curl "https://YOUR-SITE.netlify.app/api/search?q=Maduro&limit=5"
+```
 
-**3. Integrate**
-Use the provided code examples to integrate OFAC data into your application.
+**JavaScript:**
+```javascript
+const response = await fetch('/api/search?q=Maduro&limit=5');
+const data = await response.json();
+console.log(data.results);
+```
+
+**Expected Response:**
+```json
+{
+  "results": [
+    {
+      "uid": "12345",
+      "name": "Nicolás Maduro",
+      "type": "Individual",
+      "score": 0.98
+    },
+    {
+      "uid": "12346",
+      "name": "Nicolás Maduro Moros",
+      "type": "Individual",
+      "score": 0.85
+    }
+  ],
+  "total": 2
+}
+```
+
+### Next Steps
+
+- **Explore the API** - Visit our [API Documentation](/docs.html) to see all available endpoints and try them out interactively
+- **Read the Usage Guide** - Check out the [Usage Guide](/usage-guide.html) for more code examples and common use cases
+- **Integrate** - Use the provided code examples to integrate OFAC data into your application
 
 ---
 

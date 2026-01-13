@@ -9,6 +9,7 @@ A modern, serverless API providing developer-friendly access to U.S. Treasury sa
 - [Architecture](#architecture)
 - [Technology Stack](#technology-stack)
 - [Setup & Installation](#setup--installation)
+- [Deployment](#deployment)
 - [API Endpoints](#api-endpoints)
 - [Data Source & Freshness](#data-source--freshness)
 - [Contributing](#contributing)
@@ -156,6 +157,207 @@ curl -X POST https://your-site.netlify.app/api/update
 ```
 
 Or wait for the scheduled update (configured in `netlify.toml`).
+
+## Deployment
+
+### Netlify Setup
+
+This project is designed to run on Netlify with automatic deployment from GitHub.
+
+**Prerequisites:**
+- Netlify account (free tier works)
+- GitHub repository connected to Netlify
+- Node.js 18+ runtime
+
+**Deployment Steps:**
+
+1. **Connect Repository to Netlify:**
+   - Go to https://app.netlify.com
+   - Click "Add new site" → "Import an existing project"
+   - Select GitHub and authorize
+   - Choose your repository
+   - Netlify will auto-detect build settings
+
+2. **Configure Build Settings:**
+   - **Build command**: `npm run build`
+   - **Publish directory**: `public`
+   - **Node version**: 18 (set in netlify.toml)
+
+3. **Deploy:**
+   - Push to main branch
+   - Netlify automatically builds and deploys
+   - Your site is live at `your-site.netlify.app`
+
+### Netlify Functions
+
+The API endpoints are implemented as Netlify Functions located in `netlify/functions/`:
+
+- `ofac-search.ts` - Fuzzy search endpoint
+- `ofac-entity.ts` - Entity detail retrieval
+- `ofac-meta.ts` - Dataset metadata
+- `ofac-update.ts` - Manual refresh trigger
+
+**How it works:**
+- Each function is independently deployable
+- Automatically scales based on demand
+- No cold start penalties for typical usage
+- Functions have 10-second timeout (sufficient for our use case)
+
+**Local Testing:**
+```bash
+# Run functions locally
+netlify functions:serve
+
+# Test an endpoint
+curl http://localhost:8888/api/search?q=Maduro
+```
+
+### Netlify Blobs
+
+Data persistence is handled by Netlify Blobs, a serverless storage service.
+
+**How it works:**
+- OFAC dataset is stored in the `site:ofac` namespace
+- Data is automatically replicated across Netlify's global network
+- Each function instance can read/write to blobs
+- No additional configuration needed - blobs are automatically available
+
+**Data Storage:**
+- **Location**: `site:ofac/dataset.json.gz` (compressed OFAC data)
+- **Location**: `site:ofac/meta.json` (metadata with lastUpdated timestamp)
+- **Size**: ~2-3 MB compressed (typical OFAC dataset)
+- **Cost**: Included in Netlify's free tier
+
+**Accessing Blobs in Functions:**
+```typescript
+import { getStore } from "@netlify/blobs";
+
+const store = getStore("ofac");
+const data = await store.get("dataset.json.gz");
+const meta = await store.get("meta.json");
+```
+
+### Scheduled Updates
+
+The dataset is automatically refreshed daily via a scheduled Netlify Function.
+
+**Configuration** (in `netlify.toml`):
+```toml
+[[functions]]
+node_bundler = "esbuild"
+
+[functions."ofac-update"]
+schedule = "0 2 * * *"  # Daily at 2 AM UTC
+```
+
+**How it works:**
+1. Netlify triggers `ofac-update` function daily at 2 AM UTC
+2. Function fetches latest OFAC data from Treasury.gov
+3. Data is parsed, compressed, and stored in Netlify Blobs
+4. Metadata is updated with new `lastUpdated` timestamp
+5. All search/entity endpoints automatically use new data
+
+**Manual Updates:**
+
+You can also trigger updates manually:
+
+```bash
+curl -X POST https://your-site.netlify.app/api/update
+```
+
+This is useful for:
+- Testing the update process
+- Refreshing data outside the scheduled window
+- Responding to urgent OFAC list changes
+
+### Environment Variables
+
+The following environment variables can be configured in Netlify:
+
+**Optional:**
+- `OFAC_UPDATE_SECRET` - Secret key for manual update endpoint (recommended for production)
+- `LOG_LEVEL` - Logging verbosity (default: "info")
+
+**To set environment variables:**
+1. Go to Site settings → Build & deploy → Environment
+2. Click "Edit variables"
+3. Add your variables
+4. Redeploy the site
+
+**Example:**
+```bash
+OFAC_UPDATE_SECRET=your-secret-key-here
+LOG_LEVEL=debug
+```
+
+### Build Process
+
+The build process prepares the site for deployment:
+
+```bash
+npm run build
+```
+
+**What happens:**
+1. TypeScript functions are compiled to JavaScript
+2. Documentation is generated from markdown
+3. Design system CSS is prepared
+4. OpenAPI spec is copied to public/
+5. All files are output to `public/` directory
+6. Netlify publishes the `public/` directory
+
+**Build Output Structure:**
+```
+public/
+├── index.html              # Homepage
+├── docs.html               # ReDoc API docs
+├── swagger-ui.html         # Swagger UI docs
+├── usage-guide.html        # Usage guide
+├── about.html              # About page
+├── openapi.yaml            # OpenAPI specification
+├── css/
+│   └── site.css            # Design system
+└── ...
+```
+
+### Monitoring & Logs
+
+**View Deployment Logs:**
+1. Go to your Netlify site dashboard
+2. Click "Deploys"
+3. Select a deployment to view logs
+4. Check "Functions" tab for function execution logs
+
+**Common Issues:**
+
+| Issue | Solution |
+|-------|----------|
+| Build fails | Check Node version (18+), verify npm install succeeds locally |
+| Functions timeout | Check OFAC data size, optimize parsing |
+| Blobs not accessible | Verify site is deployed, check function permissions |
+| Data not updating | Check scheduled function logs, verify OFAC source is accessible |
+
+### Rollback & Troubleshooting
+
+**Rollback to Previous Deployment:**
+1. Go to Netlify site dashboard
+2. Click "Deploys"
+3. Find the previous working deployment
+4. Click "Publish deploy"
+
+**Clear Cached Data:**
+If you need to clear the cached OFAC dataset:
+1. Trigger a manual update: `curl -X POST https://your-site.netlify.app/api/update`
+2. Or wait for the next scheduled update
+
+**Debug Function Execution:**
+```bash
+# Run function locally with logging
+LOG_LEVEL=debug netlify functions:serve
+
+# Test with curl
+curl -v http://localhost:8888/api/search?q=test
+```
 
 ## API Endpoints
 

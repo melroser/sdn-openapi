@@ -1,0 +1,677 @@
+/**
+ * Unified Design System CSS
+ * OFAC API Documentation
+ * 
+ * Design Variables:
+ * - Colors: bg, panel, text, muted, border, accent, accent2
+ * - Spacing: max-width, radius, shadow
+ * - Typography: font-family, sizes
+ * - Responsive: mobile-first approach
+ */
+
+:root {
+  /* Colors */
+  --bg: #0b1220;
+  --panel: rgba(255, 255, 255, 0.04);
+  --text: rgba(255, 255, 255, 0.9);
+  --muted: rgba(255, 255, 255, 0.65);
+  --border: rgba(255, 255, 255, 0.1);
+  --accent: #7c3aed;
+  --accent2: #22c55e;
+  
+  /* Spacing */
+  --max: 1040px;
+  --radius: 14px;
+  --shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+  
+  /* Typography */
+  --font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --line-height: 1.55;
+}
+
+/* ============================================
+   Reset & Base Styles
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background:
+    radial-gradient(1200px 600px at 20% -10%, rgba(124, 58, 237, 0.35), transparent 60%),
+    radial-gradient(1000px 500px at 90% 0%, rgba(34, 197, 94, 0.2), transparent 55%),
+    var(--bg);
+  font: 16px/var(--line-height) var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   Typography
+   ============================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.15;
+  margin: 0 0 12px;
+  color: var(--text);
+}
+
+h1 {
+  font-size: 40px;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 24px;
+  margin-top: 26px;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+h4 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+h5 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+h6 {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+p, li {
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+/* ============================================
+   Links
+   ============================================ */
+
+a {
+  color: #a78bfa;
+  text-decoration: none;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #c4b5fd;
+}
+
+a:active {
+  opacity: 0.8;
+}
+
+/* ============================================
+   Code & Pre
+   ============================================ */
+
+code, pre {
+  font-family: var(--font-mono);
+}
+
+code {
+  font-size: 0.9em;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #a78bfa;
+}
+
+pre {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  overflow-x: auto;
+  margin: 12px 0;
+  line-height: 1.5;
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* ============================================
+   Lists
+   ============================================ */
+
+ul, ol {
+  margin: 12px 0 12px 24px;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+/* ============================================
+   Blockquotes
+   ============================================ */
+
+blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: 16px;
+  margin: 12px 0;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ============================================
+   Tables
+   ============================================ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+th, td {
+  border: 1px solid var(--border);
+  padding: 12px;
+  text-align: left;
+}
+
+th {
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85em;
+  letter-spacing: 0.5px;
+}
+
+tr:hover {
+  background: rgba(124, 58, 237, 0.1);
+}
+
+/* ============================================
+   Horizontal Rule
+   ============================================ */
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 24px 0;
+}
+
+/* ============================================
+   Layout Containers
+   ============================================ */
+
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 28px 20px 64px;
+}
+
+.container {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ============================================
+   Navigation
+   ============================================ */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(12px);
+  background: rgba(11, 18, 32, 0.75);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav .wrap {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+}
+
+.brand {
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--text);
+  font-size: 16px;
+}
+
+.links {
+  margin-left: auto;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.links a {
+  color: var(--muted);
+  padding: 8px 10px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.links a:hover {
+  color: var(--text);
+  background: var(--panel);
+  text-decoration: none;
+}
+
+/* ============================================
+   Cards
+   ============================================ */
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--accent), #4f46e5);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 35px rgba(124, 58, 237, 0.35);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn:hover {
+  text-decoration: none;
+  filter: brightness(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 45px rgba(124, 58, 237, 0.45);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  filter: none;
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-muted {
+  color: var(--muted);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.mt-4 { margin-top: 32px; }
+
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+.mb-4 { margin-bottom: 32px; }
+
+.p-1 { padding: 8px; }
+.p-2 { padding: 16px; }
+.p-3 { padding: 24px; }
+.p-4 { padding: 32px; }
+
+.gap-1 { gap: 8px; }
+.gap-2 { gap: 16px; }
+.gap-3 { gap: 24px; }
+.gap-4 { gap: 32px; }
+
+.hidden {
+  display: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ============================================
+   Responsive Design - Tablet (768px and below)
+   ============================================ */
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 32px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+
+  .wrap {
+    padding: 20px 16px 48px;
+  }
+
+  .nav .wrap {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .links {
+    gap: 10px;
+  }
+
+  .links a {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+
+  pre {
+    font-size: 0.85em;
+    padding: 12px;
+  }
+
+  code {
+    font-size: 0.85em;
+  }
+
+  table {
+    font-size: 0.9em;
+  }
+
+  th, td {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+}
+
+/* ============================================
+   Responsive Design - Mobile (480px and below)
+   ============================================ */
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  body {
+    font-size: 15px;
+  }
+
+  .wrap {
+    padding: 16px 12px 40px;
+  }
+
+  .nav {
+    position: relative;
+  }
+
+  .nav .wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .brand {
+    font-size: 14px;
+  }
+
+  .links {
+    width: 100%;
+    flex-direction: column;
+    gap: 4px;
+    margin-left: 0;
+  }
+
+  .links a {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  pre {
+    font-size: 0.8em;
+    padding: 10px;
+    margin: 8px 0;
+  }
+
+  code {
+    font-size: 0.8em;
+  }
+
+  p code {
+    padding: 2px 4px;
+  }
+
+  ul, ol {
+    margin-left: 16px;
+  }
+
+  li {
+    margin-bottom: 6px;
+  }
+
+  table {
+    font-size: 0.85em;
+  }
+
+  th, td {
+    padding: 8px;
+  }
+
+  blockquote {
+    padding-left: 12px;
+    margin: 8px 0;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .mt-1 { margin-top: 6px; }
+  .mt-2 { margin-top: 12px; }
+  .mt-3 { margin-top: 18px; }
+  .mt-4 { margin-top: 24px; }
+
+  .mb-1 { margin-bottom: 6px; }
+  .mb-2 { margin-bottom: 12px; }
+  .mb-3 { margin-bottom: 18px; }
+  .mb-4 { margin-bottom: 24px; }
+
+  .p-1 { padding: 6px; }
+  .p-2 { padding: 12px; }
+  .p-3 { padding: 18px; }
+  .p-4 { padding: 24px; }
+}
+
+/* ============================================
+   Responsive Design - Small Mobile (320px and below)
+   ============================================ */
+
+@media (max-width: 320px) {
+  h1 {
+    font-size: 20px;
+  }
+
+  h2 {
+    font-size: 16px;
+  }
+
+  h3 {
+    font-size: 14px;
+  }
+
+  body {
+    font-size: 14px;
+  }
+
+  .wrap {
+    padding: 12px 8px 32px;
+  }
+
+  .nav .wrap {
+    padding: 8px;
+  }
+
+  .brand {
+    font-size: 12px;
+  }
+
+  .links a {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  pre {
+    font-size: 0.75em;
+    padding: 8px;
+  }
+
+  code {
+    font-size: 0.75em;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  a {
+    color: #0066cc;
+  }
+
+  pre {
+    border: 1px solid #ccc;
+    background: #f5f5f5;
+    color: black;
+  }
+
+  code {
+    background: #f5f5f5;
+    color: black;
+  }
+}

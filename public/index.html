@@ -5,134 +5,231 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OFAC API: Serverless Sanctions Data Access | OFAC API</title>
   <meta name="description" content="Professional documentation for the OFAC API by devs.miami">
+  <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons/dist/ionicons/ionicons.esm.js"></script>
+  <noscript><script src="https://cdn.jsdelivr.net/npm/ionicons/dist/ionicons/ionicons.js"></script></noscript>
   <style>
     
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    /* LIGHT THEME */
+    :root {
+      color-scheme: light;
+      
+      /* Loom-ish background knobs */
+      --loom-bg: #ffffff;
+      
+      /* grid */
+      --loom-grid-size: 144px;
+      --loom-grid-alpha: 0.18;
+      
+      /* glows */
+      --loom-indigo: 0.16;
+      --loom-pink: 0.12;
+      --loom-emerald: 0.12;
+      
+      /* hero slab tint (very light purple) */
+      --loom-slab: rgba(99, 102, 241, 0.10);
+      
+      /* optional vignette */
+      --loom-vignette: 0.09;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
-    :root {
-      --primary-color: #1a1a2e;
-      --secondary-color: #16213e;
-      --accent-color: #00d4ff;
-      --text-color: #ffffff;
-      --text-secondary: #b0b0b0;
-      --bg-color: #0f3460;
-      --font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
-      --heading-font: 'Poppins', 'Inter', sans-serif;
-      --code-font: 'Fira Code', 'Courier New', monospace;
-    }
-
-    html {
-      scroll-behavior: smooth;
+    html,
+    body {
+      height: 100%;
+      background: var(--loom-bg) !important;
+      color: #09090b !important;
     }
 
     body {
-      font-family: var(--font-family);
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      line-height: 1.6;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
+    .bg-loom {
+      background-color: var(--loom-bg);
+      background-image:
+        /* Glows */
+        radial-gradient(900px 500px at 50% 0%, rgba(99, 102, 241, var(--loom-indigo)), transparent 60%),
+        radial-gradient(800px 450px at 15% 25%, rgba(236, 72, 153, var(--loom-pink)), transparent 60%),
+        radial-gradient(800px 450px at 85% 30%, rgba(34, 197, 94, var(--loom-emerald)), transparent 60%),
+        /* Vignette */
+        radial-gradient(1200px 700px at 50% 10%, rgba(0, 0, 0, var(--loom-vignette)), transparent 60%),
+        /* The Grid */
+        linear-gradient(to bottom, rgba(15, 23, 42, var(--loom-grid-alpha)) 1px, transparent 1px),
+        linear-gradient(to right, rgba(15, 23, 42, var(--loom-grid-alpha)) 1px, transparent 1px);
+      background-size:
+        auto, auto, auto, auto,
+        var(--loom-grid-size) var(--loom-grid-size),
+        var(--loom-grid-size) var(--loom-grid-size);
+      background-position:
+        center, center, center, center,
+        top left, top left;
+      background-repeat:
+        no-repeat, no-repeat, no-repeat, no-repeat,
+        repeat, repeat;
+      background-attachment: fixed;
+    }
+
+    .loom-slab {
+      background: var(--loom-slab);
+    }
+
+    .loom-card {
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.06),
+        0 1px 2px rgba(0,0,0,0.04),
+        0 20px 50px -12px rgba(0,0,0,0.15);
     }
 
     /* Navigation */
-    .navbar {
-      background-color: var(--primary-color);
-      border-bottom: 2px solid var(--accent-color);
+    .nav-sticky {
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     }
 
-    .navbar .container {
+    .max-w-4xl {
+      max-width: 56rem;
+    }
+
+    .mx-auto {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .px-5 {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    .py-4 {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .py-12 {
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
+
+    .p-10 {
+      padding: 2.5rem;
+    }
+
+    .flex {
       display: flex;
-      justify-content: space-between;
+    }
+
+    .items-center {
       align-items: center;
-      padding: 1rem 20px;
     }
 
-    .nav-brand {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: var(--accent-color);
+    .justify-between {
+      justify-content: space-between;
     }
 
-    .logo {
-      font-family: var(--heading-font);
-      letter-spacing: 1px;
+    .gap-6 {
+      gap: 1.5rem;
     }
 
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      flex-wrap: wrap;
+    .ml-auto {
+      margin-left: auto;
     }
 
-    .nav-link {
-      color: var(--text-color);
-      text-decoration: none;
-      transition: color 0.3s ease;
+    .font-bold {
+      font-weight: 700;
+    }
+
+    .text-lg {
+      font-size: 1.125rem;
+    }
+
+    .text-indigo-600 {
+      color: #6366f1;
+    }
+
+    .text-sm {
+      font-size: 0.875rem;
+    }
+
+    .font-medium {
       font-weight: 500;
     }
 
-    .nav-link:hover {
-      color: var(--accent-color);
+    .text-gray-600 {
+      color: #4b5563;
     }
 
-    /* Main Content */
-    main {
-      min-height: calc(100vh - 200px);
-      padding: 3rem 20px;
+    .hover\:text-indigo-600:hover {
+      color: #6366f1;
     }
 
-    .content {
-      max-width: 900px;
-      margin: 0 auto;
+    .transition {
+      transition: all 0.2s;
     }
 
-    /* API Docs Container */
-    .api-docs-container {
-      min-height: calc(100vh - 200px);
-      padding: 0;
-      background-color: var(--bg-color);
+    .bg-white {
+      background: white;
     }
 
-    h1, h2, h3, h4, h5, h6 {
-      font-family: var(--heading-font);
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-      color: var(--accent-color);
+    .rounded-lg {
+      border-radius: 0.75rem;
     }
 
+    /* Typography */
     h1 {
-      font-size: 2.5rem;
-      margin-top: 0;
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      color: #09090b;
     }
 
     h2 {
+      font-size: 1.875rem;
+      font-weight: 600;
+      line-height: 1.2;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #09090b;
+    }
+
+    h2 ion-icon {
       font-size: 2rem;
-      border-bottom: 2px solid var(--accent-color);
-      padding-bottom: 0.5rem;
+      color: #6366f1;
     }
 
     h3 {
-      font-size: 1.5rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      color: #09090b;
     }
 
     p {
+      color: #666666;
       margin-bottom: 1rem;
-      color: var(--text-secondary);
+      line-height: 1.6;
     }
 
     a {
-      color: var(--accent-color);
+      color: #6366f1;
       text-decoration: none;
       transition: opacity 0.3s ease;
     }
@@ -142,89 +239,161 @@
       text-decoration: underline;
     }
 
-    /* Code Blocks */
-    pre {
-      background-color: var(--primary-color);
-      border-left: 4px solid var(--accent-color);
-      padding: 1rem;
-      margin: 1rem 0;
-      overflow-x: auto;
-      border-radius: 4px;
+    /* Code */
+    code {
+      font-family: 'Fira Code', 'Courier New', monospace;
+      background: #f3f4f6;
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.25rem;
+      color: #d73a49;
+      font-size: 0.9em;
     }
 
-    code {
-      font-family: var(--code-font);
-      font-size: 0.9rem;
+    pre {
+      background: #f9fafb;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      overflow: auto;
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      color: #374151;
+      margin: 1.5rem 0;
     }
 
     pre code {
-      background-color: transparent;
-      color: var(--text-color);
+      background: none;
+      padding: 0;
+      color: inherit;
     }
 
-    p code {
-      background-color: var(--primary-color);
-      padding: 0.2rem 0.4rem;
-      border-radius: 3px;
-      color: var(--accent-color);
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #6366f1;
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: #4f46e5;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn ion-icon {
+      font-size: 1rem;
+    }
+
+    /* Highlight box */
+    .highlight {
+      background: #f0f4ff;
+      border-left: 4px solid #6366f1;
+      padding: 1rem 1.25rem;
+      border-radius: 0.5rem;
+      margin: 1.5rem 0;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .highlight ion-icon {
+      color: #6366f1;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+      margin-top: 0.125rem;
+    }
+
+    .highlight p {
+      margin: 0;
+      color: #09090b;
+    }
+
+    /* Grid */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .feature-card {
+      background: white;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      transition: all 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: #6366f1;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+    }
+
+    .feature-card h3 {
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      color: #09090b;
+    }
+
+    .feature-card ion-icon {
+      color: #6366f1;
+      font-size: 1.5rem;
+    }
+
+    .feature-card p {
+      margin-bottom: 0;
+      font-size: 0.875rem;
+      color: #666666;
+    }
+
+    /* Code example */
+    .code-example {
+      margin: 1.5rem 0;
+    }
+
+    .code-label {
+      color: #6366f1;
+      font-weight: 600;
+      font-size: 0.75rem;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     /* Lists */
-    ul, ol {
-      margin-left: 2rem;
-      margin-bottom: 1rem;
+    ul {
+      margin-left: 1.25rem;
+      padding: 0;
     }
 
     li {
-      margin-bottom: 0.5rem;
-    }
-
-    /* Blockquotes */
-    blockquote {
-      border-left: 4px solid var(--accent-color);
-      padding-left: 1rem;
-      margin: 1rem 0;
-      color: var(--text-secondary);
-      font-style: italic;
-    }
-
-    /* Tables */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1rem 0;
-    }
-
-    th, td {
-      border: 1px solid var(--secondary-color);
-      padding: 0.75rem;
-      text-align: left;
-    }
-
-    th {
-      background-color: var(--primary-color);
-      color: var(--accent-color);
-      font-weight: bold;
+      margin-bottom: 0.625rem;
+      color: #666666;
     }
 
     /* Footer */
     .footer {
-      background-color: var(--primary-color);
-      border-top: 2px solid var(--accent-color);
-      padding: 2rem 20px;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      padding-top: 1.5rem;
       margin-top: 3rem;
-    }
-
-    .footer-content {
       text-align: center;
-      color: var(--text-secondary);
+      color: #666666;
+      font-size: 0.875rem;
     }
 
-    .footer-content p {
-      margin-bottom: 0.5rem;
-    }
-
-    /* Responsive Design */
+    /* Responsive */
     @media (max-width: 768px) {
       h1 {
         font-size: 2rem;
@@ -234,88 +403,31 @@
         font-size: 1.5rem;
       }
 
-      .nav-links {
-        gap: 1rem;
-        font-size: 0.9rem;
-      }
-
-      main {
-        padding: 2rem 10px;
+      .p-10 {
+        padding: 1.5rem;
       }
 
       pre {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
       }
     }
-
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 1.5rem;
-      }
-
-      h2 {
-        font-size: 1.2rem;
-      }
-
-      .navbar .container {
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .nav-links {
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      .nav-link {
-        display: block;
-      }
-    }
-
-    /* Syntax Highlighting */
-    .hljs {
-      color: var(--text-color);
-    }
-
-    .hljs-string { color: #7ec699; }
-    .hljs-number { color: #ff9999; }
-    .hljs-literal { color: #ff9999; }
-    .hljs-attr { color: #7ec699; }
-    .hljs-variable { color: var(--accent-color); }
-    .hljs-template-variable { color: var(--accent-color); }
-    .hljs-tag { color: var(--accent-color); }
-    .hljs-name { color: var(--accent-color); }
-    .hljs-type { color: var(--accent-color); }
-    .hljs-attribute { color: #7ec699; }
-    .hljs-regexp { color: #ff9999; }
-    .hljs-link { color: #7ec699; }
-    .hljs-symbol { color: #ff9999; }
-    .hljs-bullet { color: #ff9999; }
-    .hljs-built_in { color: var(--accent-color); }
-    .hljs-builtin-name { color: var(--accent-color); }
-    .hljs-meta { color: var(--text-secondary); }
-    .hljs-deletion { color: #ff9999; }
-    .hljs-addition { color: #7ec699; }
-    .hljs-emphasis { font-style: italic; }
-    .hljs-strong { font-weight: bold; }
   
   </style>
 </head>
-<body>
-  <nav class="navbar">
-    <div class="container">
-      <div class="nav-brand">
-        <span class="logo">devs.miami</span>
-      </div>
-      <div class="nav-links">
+<body class="bg-loom">
+  <div class="nav-sticky">
+    <div class="max-w-4xl mx-auto px-5 py-4 flex items-center justify-between">
+      <div class="font-bold text-lg text-indigo-600">SDN OpenAPI</div>
+      <div class="flex gap-6 ml-auto">
         <a href="/docs.html" class="nav-link">ReDoc</a><a href="/swagger-ui.html" class="nav-link">Swagger UI</a><a href="/usage-guide.html" class="nav-link">Usage Guide</a><a href="/about.html" class="nav-link">About</a><a href="https://github.com" class="nav-link">GitHub</a>
       </div>
     </div>
-  </nav>
+  </div>
 
-  <main class="container">
-    <article class="content">
-      <h1>OFAC API: Serverless Sanctions Data Access</h1>
+  <div class="max-w-4xl mx-auto px-5 py-12">
+    <div class="loom-card bg-white rounded-lg p-10">
+      <article class="content">
+        <h1>OFAC API: Serverless Sanctions Data Access</h1>
 <h2>Hero Section</h2>
 <p>Welcome to the OFAC API—a modern, serverless proof-of-concept for accessing U.S. Treasury sanctions data in real-time. Built with cutting-edge cloud technology, this project demonstrates how to efficiently query and integrate OFAC compliance data into your applications.</p>
 <p><strong>Explore the power of serverless architecture combined with critical compliance data.</strong></p>
@@ -353,11 +465,67 @@
 <li>Real-time Data Processing</li>
 </ul>
 <hr>
+<h2>Data Provenance &amp; Freshness</h2>
+<h3>Data Source</h3>
+<p>All data comes from the <strong>U.S. Treasury Office of Foreign Assets Control (OFAC)</strong> Specially Designated Nationals (SDN) List.</p>
+<p><strong>Official OFAC Source:</strong> <a href="https://home.treasury.gov/policy-guidance/financial-sanctions-and-embargoes/specially-designated-nationals-and-blocked-persons-list-sdn-human-readable-lists">OFAC SDN Human-Readable Lists</a></p>
+<h3>Update Frequency</h3>
+<ul>
+<li><strong>Automatic Updates</strong>: Daily at 2 AM UTC</li>
+<li><strong>Manual Updates</strong>: Available on-demand via the <code>/api/update</code> endpoint</li>
+<li><strong>Update Mechanism</strong>: Scheduled Netlify Functions automatically fetch the latest OFAC data and store it in Netlify Blobs</li>
+</ul>
+<h3>Data Freshness</h3>
+<ul>
+<li><strong>Typical Freshness</strong>: Within 24 hours of OFAC updates</li>
+<li><strong>OFAC Publication Schedule</strong>: Updates published on business days</li>
+<li><strong>Processing Delay</strong>: Approximately 1-2 hours after OFAC publication</li>
+<li><strong>Check Last Update</strong>: Use the <code>/api/meta</code> endpoint to retrieve the <code>lastUpdated</code> timestamp</li>
+</ul>
+<h3>Metadata Endpoint</h3>
+<p>Get information about the current dataset:</p>
+<pre><code class="hljs language-plaintext">GET /api/meta</code></pre><p>Response includes:</p>
+<ul>
+<li><code>lastUpdated</code>: ISO 8601 timestamp of the last data refresh</li>
+<li><code>recordCount</code>: Total number of entities in the dataset</li>
+<li><code>version</code>: API version</li>
+</ul>
+<h3>Manual Update Trigger</h3>
+<p>Trigger a manual data refresh:</p>
+<pre><code class="hljs language-plaintext">POST /api/update</code></pre><p>Optional request body:</p>
+<pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;secret&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;YOUR_SECRET&quot;</span>
+<span class="hljs-punctuation">}</span></code></pre><hr>
 <h2>Quick Start</h2>
-<h3>Get Started in 3 Steps</h3>
-<p><strong>1. Explore the API</strong><br>Visit our API Documentation to see all available endpoints and try them out interactively.</p>
-<p><strong>2. Read the Usage Guide</strong><br>Check out the Usage Guide for code examples and common use cases.</p>
-<p><strong>3. Integrate</strong><br>Use the provided code examples to integrate OFAC data into your application.</p>
+<p>Get started in 30 seconds with a working example:</p>
+<h3>Search for an Entity</h3>
+<p><strong>cURL:</strong></p>
+<pre><code class="hljs language-bash">curl <span class="hljs-string">&quot;https://YOUR-SITE.netlify.app/api/search?q=Maduro&amp;limit=5&quot;</span></code></pre><p><strong>JavaScript:</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">&#x27;/api/search?q=Maduro&amp;limit=5&#x27;</span>);
+<span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> response.<span class="hljs-title function_">json</span>();
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(data.<span class="hljs-property">results</span>);</code></pre><p><strong>Expected Response:</strong></p>
+<pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;results&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;uid&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;12345&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Nicolás Maduro&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Individual&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;score&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0.98</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;uid&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;12346&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Nicolás Maduro Moros&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Individual&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;score&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0.85</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;total&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span>
+<span class="hljs-punctuation">}</span></code></pre><h3>Next Steps</h3>
+<ul>
+<li><strong>Explore the API</strong> - Visit our <a href="/docs.html">API Documentation</a> to see all available endpoints and try them out interactively</li>
+<li><strong>Read the Usage Guide</strong> - Check out the <a href="/usage-guide.html">Usage Guide</a> for more code examples and common use cases</li>
+<li><strong>Integrate</strong> - Use the provided code examples to integrate OFAC data into your application</li>
+</ul>
 <hr>
 <h2>API Endpoints</h2>
 <h3>Search Entities</h3>
@@ -444,17 +612,9 @@
 <hr>
 <p>Built with love by devs.miami</p>
 
-    </article>
-  </main>
-
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <p>&copy; 2024 devs.miami. All rights reserved.</p>
-        <p>Built by <strong>Robert Melrose</strong></p>
-      </div>
+      </article>
     </div>
-  </footer>
+  </div>
 
   <script>
     
