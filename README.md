@@ -171,29 +171,29 @@ Search for entities in the OFAC sanctions list using fuzzy matching.
 
 **Example:**
 ```bash
-curl "https://your-site.netlify.app/api/search?q=Vladimir&limit=10"
+curl "https://your-site.netlify.app/api/search?q=Maduro&limit=10"
 ```
 
 **Response:**
 ```json
 {
   "ok": true,
-  "q": "Vladimir",
+  "q": "Maduro",
   "count": 2,
   "results": [
     {
       "uid": "12345",
-      "name": "Vladimir Putin",
+      "name": "Nicolás Maduro",
       "type": "Individual",
       "score": 0.98,
-      "programs": ["UKRAINE-EO14066"]
+      "programs": ["VENEZUELA"]
     },
     {
       "uid": "12346",
-      "name": "Vladimir Sokolov",
+      "name": "Nicolás Maduro Moros",
       "type": "Individual",
       "score": 0.85,
-      "programs": ["UKRAINE-EO14066"]
+      "programs": ["VENEZUELA"]
     }
   ]
 }
@@ -217,22 +217,22 @@ curl "https://your-site.netlify.app/api/entity/12345"
 ```json
 {
   "uid": "12345",
-  "name": "Vladimir Putin",
+  "name": "Nicolás Maduro",
   "type": "Individual",
   "aliases": [
-    "Wladimir Putin",
-    "Vladimir Vladimirovich Putin"
+    "Nicolás Maduro Moros",
+    "Maduro"
   ],
   "addresses": [
     {
-      "address": "Kremlin",
-      "city": "Moscow",
-      "country": "Russia"
+      "address": "Miraflores Palace",
+      "city": "Caracas",
+      "country": "Venezuela"
     }
   ],
-  "dateOfBirth": "1952-10-01",
-  "placeOfBirth": "Leningrad",
-  "programs": ["UKRAINE-EO14066"]
+  "dateOfBirth": "1962-11-23",
+  "placeOfBirth": "Caracas",
+  "programs": ["VENEZUELA"]
 }
 ```
 

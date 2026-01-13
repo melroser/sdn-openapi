@@ -46,7 +46,7 @@ const searchEntities = async (query, limit = 20) => {
 };
 
 // Usage
-searchEntities('Vladimir', 10);
+searchEntities('Maduro', 10);
 ```
 
 #### Python Example
@@ -74,17 +74,17 @@ def search_entities(query, limit=20):
     return data
 
 # Usage
-search_entities('Vladimir', 10)
+search_entities('Maduro', 10)
 ```
 
 #### cURL Example
 
 ```bash
 # Basic search
-curl "https://YOUR-SITE.netlify.app/api/search?q=Vladimir&limit=10"
+curl "https://YOUR-SITE.netlify.app/api/search?q=Maduro&limit=10"
 
 # Pretty-printed JSON response
-curl -s "https://YOUR-SITE.netlify.app/api/search?q=Vladimir&limit=10" | jq .
+curl -s "https://YOUR-SITE.netlify.app/api/search?q=Maduro&limit=10" | jq .
 ```
 
 **Response**:
@@ -93,13 +93,13 @@ curl -s "https://YOUR-SITE.netlify.app/api/search?q=Vladimir&limit=10" | jq .
   "results": [
     {
       "uid": "12345",
-      "name": "Vladimir Putin",
+      "name": "Nicolás Maduro",
       "type": "Individual",
       "score": 0.98
     },
     {
       "uid": "12346",
-      "name": "Vladimir Sokolov",
+      "name": "Nicolás Maduro Moros",
       "type": "Individual",
       "score": 0.85
     }
@@ -177,21 +177,21 @@ curl -s "https://YOUR-SITE.netlify.app/api/entity/12345" | jq .
 ```json
 {
   "uid": "12345",
-  "name": "Vladimir Putin",
+  "name": "Nicolás Maduro",
   "type": "Individual",
   "aliases": [
-    "Wladimir Putin",
-    "Vladimir Vladimirovich Putin"
+    "Nicolás Maduro Moros",
+    "Maduro"
   ],
   "addresses": [
     {
-      "address": "Kremlin",
-      "city": "Moscow",
-      "country": "Russia"
+      "address": "Miraflores Palace",
+      "city": "Caracas",
+      "country": "Venezuela"
     }
   ],
-  "dateOfBirth": "1952-10-01",
-  "placeOfBirth": "Leningrad"
+  "dateOfBirth": "1962-11-23",
+  "placeOfBirth": "Caracas"
 }
 ```
 

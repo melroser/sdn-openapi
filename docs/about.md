@@ -150,8 +150,8 @@ API Ready
 
 The search engine uses Fuse.js to provide intelligent matching:
 
-- **Typo Tolerance**: "Vladmir Putin" finds "Vladimir Putin"
-- **Partial Matching**: "Putin" finds "Vladimir Putin"
+- **Typo Tolerance**: "Maduro" finds "Nicolás Maduro"
+- **Partial Matching**: "Maduro" finds "Nicolás Maduro Moros"
 - **Relevance Scoring**: Results ranked by match quality
 - **Fast**: Searches complete in milliseconds
 
@@ -195,7 +195,7 @@ We initially had concerns about serverless for compliance APIs. In practice, Net
 
 ### 2. Fuzzy Search is Essential
 
-Early versions used exact matching. We quickly learned that compliance screening requires fuzzy matching. Users search for "Vladmir Putin" (typo), "Putin" (partial), and "V. Putin" (abbreviated). Fuzzy search handles all these cases.
+Early versions used exact matching. We quickly learned that compliance screening requires fuzzy matching. Users search for "Maduro" (typo), "Maduro" (partial), and "N. Maduro" (abbreviated). Fuzzy search handles all these cases.
 
 ### 3. Documentation Matters
 

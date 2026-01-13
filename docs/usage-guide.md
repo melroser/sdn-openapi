@@ -15,12 +15,12 @@ The OFAC API is a REST API—no installation required. Simply make HTTP requests
 Get started in seconds with a simple search request:
 
 ```bash
-curl "https://YOUR-SITE.netlify.app/api/search?q=putin"
+curl "https://YOUR-SITE.netlify.app/api/search?q=maduro"
 ```
 
 ```javascript
 // JavaScript/Node.js
-const response = await fetch('https://YOUR-SITE.netlify.app/api/search?q=putin');
+const response = await fetch('https://YOUR-SITE.netlify.app/api/search?q=maduro');
 const data = await response.json();
 console.log(data);
 ```
@@ -29,7 +29,7 @@ console.log(data);
 # Python
 import requests
 
-response = requests.get('https://YOUR-SITE.netlify.app/api/search?q=putin')
+response = requests.get('https://YOUR-SITE.netlify.app/api/search?q=maduro')
 data = response.json()
 print(data)
 ```
@@ -43,7 +43,7 @@ All responses are JSON with a consistent structure:
   "results": [
     {
       "uid": "12345",
-      "name": "Vladimir Putin",
+      "name": "Nicolás Maduro",
       "type": "Individual",
       "score": 0.98
     }
@@ -104,7 +104,7 @@ Control the number of results returned:
 
 ```bash
 # Get top 5 results
-curl "https://YOUR-SITE.netlify.app/api/search?q=putin&limit=5"
+curl "https://YOUR-SITE.netlify.app/api/search?q=maduro&limit=5"
 ```
 
 ```javascript
@@ -121,7 +121,7 @@ async function searchWithLimit(query, limit = 10) {
   return response.json();
 }
 
-const results = await searchWithLimit('putin', 10);
+const results = await searchWithLimit('maduro', 10);
 console.log(`Found ${results.total} matches, showing ${results.results.length}`);
 ```
 
@@ -137,7 +137,7 @@ def search_with_limit(query, limit=10):
     )
     return response.json()
 
-results = search_with_limit('putin', 10)
+results = search_with_limit('maduro', 10)
 print(f"Found {results['total']} matches")
 ```
 
@@ -157,10 +157,10 @@ async function searchByType(query, entityType) {
 }
 
 // Get only individuals
-const individuals = await searchByType('putin', 'Individual');
+const individuals = await searchByType('maduro', 'Individual');
 
 // Get only entities (companies, organizations)
-const companies = await searchByType('gazprom', 'Entity');
+const companies = await searchByType('pdvsa', 'Entity');
 ```
 
 ```python
@@ -178,8 +178,8 @@ def search_by_type(query, entity_type):
     ]
 
 # Usage
-individuals = search_by_type('putin', 'Individual')
-companies = search_by_type('gazprom', 'Entity')
+individuals = search_by_type('maduro', 'Individual')
+companies = search_by_type('pdvsa', 'Entity')
 ```
 
 ---
@@ -286,7 +286,7 @@ async function complianceCheck(name) {
 }
 
 // Usage
-const result = await complianceCheck('Vladimir Putin');
+const result = await complianceCheck('Nicolás Maduro');
 if (result.status === 'match_found') {
   console.log(`⚠️ Match found with ${(result.confidence * 100).toFixed(1)}% confidence`);
   console.log(`Entity: ${result.entity.name}`);
@@ -322,7 +322,7 @@ def compliance_check(name):
     }
 
 # Usage
-result = compliance_check('Vladimir Putin')
+result = compliance_check('Nicolás Maduro')
 if result['status'] == 'match_found':
     print(f"⚠️ Match found with {result['confidence']*100:.1f}% confidence")
     print(f"Entity: {result['entity']['name']}")
@@ -452,7 +452,7 @@ async function fetchWithRetry(url, maxRetries = 3) {
 }
 
 // Usage
-const data = await fetchWithRetry('https://YOUR-SITE.netlify.app/api/search?q=putin');
+const data = await fetchWithRetry('https://YOUR-SITE.netlify.app/api/search?q=maduro');
 ```
 
 ```python
@@ -476,7 +476,7 @@ def fetch_with_retry(url, max_retries=3):
     raise Exception('Max retries exceeded')
 
 # Usage
-data = fetch_with_retry('https://YOUR-SITE.netlify.app/api/search?q=putin')
+data = fetch_with_retry('https://YOUR-SITE.netlify.app/api/search?q=maduro')
 ```
 
 ### Caching Strategies
@@ -611,7 +611,7 @@ def search_with_cache(query):
 curl "https://YOUR-SITE.netlify.app/api/search"
 
 # ✅ Correct
-curl "https://YOUR-SITE.netlify.app/api/search?q=putin"
+curl "https://YOUR-SITE.netlify.app/api/search?q=maduro"
 ```
 
 #### "Entity not found"
@@ -625,7 +625,7 @@ curl "https://YOUR-SITE.netlify.app/api/search?q=putin"
 const entity = await getEntityDetails('invalid-uid');
 
 // ✅ Correct - get UID from search
-const searchResults = await searchEntities('putin');
+const searchResults = await searchEntities('maduro');
 const uid = searchResults[0].uid;
 const entity = await getEntityDetails(uid);
 ```

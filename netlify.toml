@@ -6,6 +6,11 @@
   ignore = "netlify/functions/**/*.test.ts"
 
 [[redirects]]
+  from = "/openapi.yaml"
+  to = "/openapi.yaml"
+  status = 200
+
+[[redirects]]
   from = "/api/entity/*"
   to = "/.netlify/functions/ofac-entity"
   status = 200

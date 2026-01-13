@@ -436,8 +436,8 @@ Store in Blobs
 API Ready</code></pre><h3>Fuzzy Search Engine</h3>
 <p>The search engine uses Fuse.js to provide intelligent matching:</p>
 <ul>
-<li><strong>Typo Tolerance</strong>: &quot;Vladmir Putin&quot; finds &quot;Vladimir Putin&quot;</li>
-<li><strong>Partial Matching</strong>: &quot;Putin&quot; finds &quot;Vladimir Putin&quot;</li>
+<li><strong>Typo Tolerance</strong>: &quot;Maduro&quot; finds &quot;Nicolás Maduro&quot;</li>
+<li><strong>Partial Matching</strong>: &quot;Maduro&quot; finds &quot;Nicolás Maduro Moros&quot;</li>
 <li><strong>Relevance Scoring</strong>: Results ranked by match quality</li>
 <li><strong>Fast</strong>: Searches complete in milliseconds</li>
 </ul>
@@ -472,7 +472,7 @@ API Ready</code></pre><h3>Fuzzy Search Engine</h3>
 <h3>1. Serverless is Production-Ready</h3>
 <p>We initially had concerns about serverless for compliance APIs. In practice, Netlify Functions proved to be reliable, scalable, and cost-effective. The automatic scaling handles traffic spikes effortlessly.</p>
 <h3>2. Fuzzy Search is Essential</h3>
-<p>Early versions used exact matching. We quickly learned that compliance screening requires fuzzy matching. Users search for &quot;Vladmir Putin&quot; (typo), &quot;Putin&quot; (partial), and &quot;V. Putin&quot; (abbreviated). Fuzzy search handles all these cases.</p>
+<p>Early versions used exact matching. We quickly learned that compliance screening requires fuzzy matching. Users search for &quot;Maduro&quot; (typo), &quot;Maduro&quot; (partial), and &quot;N. Maduro&quot; (abbreviated). Fuzzy search handles all these cases.</p>
 <h3>3. Documentation Matters</h3>
 <p>The difference between a well-documented API and a poorly-documented one is enormous. Clear examples, interactive documentation, and helpful error messages dramatically improve developer experience.</p>
 <h3>4. Caching is Crucial</h3>
