@@ -29,7 +29,11 @@ paths:
       tags:
         - Metadata
       summary: Get dataset metadata
-      description: Retrieve information about the current dataset including last update time and record count
+      description: >
+        Retrieve information about the current dataset including last update time and record count.
+        
+        Check dataset metadata and freshness to ensure you're working with current data.
+        API requests are rate-limited to 100 requests per minute per IP address.
       operationId: getMeta
       responses:
         "200":

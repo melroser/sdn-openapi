@@ -32,7 +32,8 @@ export const brandingConfig = {
   
   // Navigation
   navigation: [
-    { label: 'API Docs', href: '/api-docs.html' },
+    { label: 'ReDoc', href: '/docs.html' },
+    { label: 'Swagger UI', href: '/swagger-ui.html' },
     { label: 'Usage Guide', href: '/usage-guide.html' },
     { label: 'About', href: '/about.html' },
     { label: 'GitHub', href: 'https://github.com' }
