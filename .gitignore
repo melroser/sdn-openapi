@@ -45,3 +45,6 @@ Thumbs.db
 
 .vscode/
 .vscode/settings.json
+
+context.txt
+ofac_horcrux.json

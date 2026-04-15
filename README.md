@@ -153,7 +153,7 @@ The API uses Netlify Blobs for storage. When deployed to Netlify, blobs are auto
 The first time the API runs, it will attempt to fetch the OFAC dataset. You can trigger this manually:
 
 ```bash
-curl -X POST https://your-site.netlify.app/api/update
+curl -X POST https://sdn-openapi.netlify.app/api/update
 ```
 
 Or wait for the scheduled update (configured in `netlify.toml`).
@@ -186,7 +186,7 @@ This project is designed to run on Netlify with automatic deployment from GitHub
 3. **Deploy:**
    - Push to main branch
    - Netlify automatically builds and deploys
-   - Your site is live at `your-site.netlify.app`
+   - Your site is live at `sdn-openapi.netlify.app`
 
 ### Netlify Functions
 
@@ -262,7 +262,7 @@ schedule = "0 2 * * *"  # Daily at 2 AM UTC
 You can also trigger updates manually:
 
 ```bash
-curl -X POST https://your-site.netlify.app/api/update
+curl -X POST https://sdn-openapi.netlify.app/api/update
 ```
 
 This is useful for:
