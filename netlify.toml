@@ -15,8 +15,8 @@
   ignore = "netlify/functions/**/*.test.ts"
 
 [[redirects]]
-  from = "/api/entity/*"
-  to = "/.netlify/functions/ofac-entity"
+  from = "/api/entity/:uid"
+  to = "/.netlify/functions/ofac-entity/:uid"
   status = 200
 
 [[redirects]]
@@ -39,4 +39,4 @@
   from = "/*"
   to = "/index.html"
   status = 200
-  condition = "!req.path.startsWith(/api) && !req.path.startsWith(/openapi) && !req.path.endsWith(.html) && !req.path.endsWith(.css) && !req.path.endsWith(.js) && !req.path.endsWith(.json) && !req.path.endsWith(.yaml)"
+  condition = "!req.path.startswith(/api) && !req.path.startswith(/openapi) && !req.path.endswith(.html) && !req.path.endswith(.css) && !req.path.endswith(.js) && !req.path.endswith(.json) && !req.path.endswith(.yaml)"
