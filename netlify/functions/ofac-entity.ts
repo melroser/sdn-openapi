@@ -1,6 +1,7 @@
 import type { Context } from "@netlify/functions";
 import { getStore } from "@netlify/blobs";
 import zlib from "node:zlib";
+import { preflight, ok, err } from "./_cors";
 
 type OfacEntity = {
   uid: string;
@@ -30,28 +31,19 @@ async function loadById() {
 }
 
 export default async (_req: Request, context: Context) => {
+  if (_req.method === "OPTIONS") return preflight();
+
   const uid = context.params?.uid;
-  if (!uid) {
-    return new Response(JSON.stringify({ ok: false, error: "Missing :uid" }), {
-      status: 400,
-      headers: { "content-type": "application/json; charset=utf-8" }
-    });
+  if (!uid) return err(400, "Missing :uid");
+
+  try {
+    const byId = await loadById();
+    const entity = byId.get(uid);
+
+    if (!entity) return err(404, "Not found", { uid });
+
+    return ok({ ok: true, entity }, { "cache-control": "public, max-age=300" });
+  } catch (e: any) {
+    return err(500, e?.message ?? "Internal error");
   }
-
-  const byId = await loadById();
-  const entity = byId.get(uid);
-
-  if (!entity) {
-    return new Response(JSON.stringify({ ok: false, error: "Not found", uid }), {
-      status: 404,
-      headers: { "content-type": "application/json; charset=utf-8" }
-    });
-  }
-
-  return new Response(JSON.stringify({ ok: true, entity }), {
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "public, max-age=300"
-    }
-  });
 };

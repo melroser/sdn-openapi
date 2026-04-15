@@ -3,6 +3,7 @@ import { getStore } from "@netlify/blobs";
 import crypto from "node:crypto";
 import zlib from "node:zlib";
 import { parseCSV, extractEntities, consolidateAltData, consolidateAddData } from "./ofac-parser";
+import { preflight } from "./_cors";
 
 const OFAC_EXPORT_BASE =
   "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports";
@@ -29,6 +30,8 @@ async function fetchText(url: string) {
 }
 
 export default async (req: Request, _context: Context) => {
+  if (req.method === "OPTIONS") return preflight();
+
   try {
     const store = getStore("ofac");
     const fetchedAt = new Date().toISOString();

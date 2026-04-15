@@ -2,6 +2,7 @@ import type { Context } from "@netlify/functions";
 import { getStore } from "@netlify/blobs";
 import Fuse from "fuse.js";
 import zlib from "node:zlib";
+import { preflight, ok, err } from "./_cors";
 
 type OfacEntity = {
   uid: string;
@@ -41,16 +42,15 @@ async function loadDataset(): Promise<{ entities: OfacEntity[]; fuse: Fuse<OfacE
 }
 
 export default async (req: Request, _context: Context) => {
+  if (req.method === "OPTIONS") return preflight();
+
   const url = new URL(req.url);
 
   const q = (url.searchParams.get("q") || "").trim();
   const limit = Math.min(Number(url.searchParams.get("limit") || "20"), 50);
 
   if (!q) {
-    return new Response(JSON.stringify({ ok: false, error: "Missing ?q=" }), {
-      status: 400,
-      headers: { "content-type": "application/json; charset=utf-8" }
-    });
+    return err(400, "Missing ?q=");
   }
 
   const { fuse } = await loadDataset();
@@ -63,10 +63,7 @@ export default async (req: Request, _context: Context) => {
     programs: r.item.programs
   }));
 
-  return new Response(JSON.stringify({ ok: true, q, count: results.length, results }), {
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "public, max-age=30"
-    }
+  return ok({ ok: true, q, count: results.length, results }, {
+    "cache-control": "public, max-age=30"
   });
 };
