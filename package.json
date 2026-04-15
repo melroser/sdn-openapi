@@ -20,6 +20,5 @@
     "test:watch": "vitest",
     "build:docs": "node docs/build.js",
     "build": "npm run build:docs",
-    "preinstall": "node preinstall.js"
   }
 }
