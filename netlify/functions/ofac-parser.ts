@@ -42,7 +42,9 @@ export async function parseCSV(csvText: string): Promise<Array<Record<string, st
 
   console.log("[CSV Parser] Starting CSV parse");
   const rows = parse(csvText, {
-    columns: (h: string) => normalizeHeader(h),
+    columns: (headers: unknown[]) => headers.map((h) =>
+      h == null ? `_col_${Math.random()}` : normalizeHeader(String(h))
+    ),
     skip_empty_lines: true,
     bom: true,
     relax_quotes: true,
