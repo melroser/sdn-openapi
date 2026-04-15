@@ -1,6 +1,9 @@
-# OFAC SDN JSON Wrapper API
+# SDN-OPENAPI
 
-A modern, serverless API providing developer-friendly access to U.S. Treasury sanctions data. This proof-of-concept demonstrates how to build scalable, real-time data services using contemporary cloud architecture.
+An API comprised of netlify functions hosted for free.
+Providing developer-friendly access to U.S. Treasury sanctions data. 
+This proof-of-concept demonstrates how to build scalable, real-time 
+data services using contemporary cloud architecture.
 
 ## Table of Contents
 
