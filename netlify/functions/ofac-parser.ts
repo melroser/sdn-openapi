@@ -35,16 +35,18 @@ export function firstDefined(
 }
 
 /**
- * Parse CSV text into structured rows with normalized headers
+ * Parse CSV text into structured rows with explicit column names.
+ * OFAC CSVs have NO header row — columns must be provided by the caller.
  */
-export async function parseCSV(csvText: string): Promise<Array<Record<string, string>>> {
+export async function parseCSV(
+  csvText: string,
+  columns: string[]
+): Promise<Array<Record<string, string>>> {
   const { parse } = await import("csv-parse/sync");
 
-  console.log("[CSV Parser] Starting CSV parse");
+  console.log(`[CSV Parser] Starting CSV parse (columns: ${columns.join(", ")})`);
   const rows = parse(csvText, {
-    columns: (headers: unknown[]) => headers.map((h) =>
-      h == null ? `_col_${Math.random()}` : normalizeHeader(String(h))
-    ),
+    columns,
     skip_empty_lines: true,
     bom: true,
     relax_quotes: true,
@@ -54,7 +56,7 @@ export async function parseCSV(csvText: string): Promise<Array<Record<string, st
 
   console.log(`[CSV Parser] Parsed ${rows.length} rows`);
   if (rows.length > 0) {
-    console.log(`[CSV Parser] Normalized headers: ${Object.keys(rows[0]).join(", ")}`);
+    console.log(`[CSV Parser] Sample row keys: ${Object.keys(rows[0]).join(", ")}`);
   }
 
   return rows;

@@ -49,9 +49,9 @@ export default async (req: Request, _context: Context) => {
     console.log(`[ofac-update] Fetching ADD CSV from ${addUrl}`);
     const addCsv = await fetchText(addUrl);
 
-    const sdnRows = await parseCSV(sdnCsv);
-    const altRows = await parseCSV(altCsv);
-    const addRows = await parseCSV(addCsv);
+    const sdnRows = await parseCSV(sdnCsv, ['ent_num', 'sdn_name', 'sdn_type', 'program', 'remarks']);
+    const altRows = await parseCSV(altCsv, ['ent_num', 'alt_type', 'alt_num', 'alt_name', 'alt_remarks']);
+    const addRows = await parseCSV(addCsv, ['ent_num', 'add_num', 'address', 'city', 'country', 'add_remarks']);
 
     // Debug mode: show real headers + sample row so we can confirm mapping
     const url = new URL(req.url);
