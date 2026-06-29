@@ -56,8 +56,9 @@ function createHTMLTemplate(title, content, pageType = 'default') {
     ${getStyles()}
   </style>
 </head>
-<body class="bg-loom">
-  <div class="nav-sticky">
+<body>
+  <div class="bg-loom">
+  <div class="navbar nav-sticky">
     <div class="max-w-4xl mx-auto px-5 py-4 flex items-center justify-between">
       <div class="font-bold text-lg text-indigo-600">SDN OpenAPI</div>
       <div class="flex gap-6 ml-auto">
@@ -71,7 +72,13 @@ function createHTMLTemplate(title, content, pageType = 'default') {
       <article class="content">
         ${content}
       </article>
+      <footer class="footer">
+        Built by Robert Melrose · <a href="https://devs.miami">devs.miami</a> ·
+        <a href="https://github.com/melroser/sdn-openapi">GitHub</a>
+      </footer>
     </div>
+  </div>
+
   </div>
 
   <script>
@@ -91,6 +98,8 @@ function getStyles() {
     /* LIGHT THEME */
     :root {
       color-scheme: light;
+      --primary-color: #6366f1;
+      --accent-color: #00d4ff;
       
       /* Loom-ish background knobs */
       --loom-bg: #ffffff;
@@ -344,6 +353,14 @@ function getStyles() {
       color: inherit;
     }
 
+    .hljs-string {
+      color: #0f766e;
+    }
+
+    .hljs-number {
+      color: #7c3aed;
+    }
+
     /* Buttons */
     .btn {
       display: inline-flex;
@@ -486,6 +503,16 @@ function getStyles() {
 
       pre {
         font-size: 0.75rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .flex {
+        flex-wrap: wrap;
+      }
+
+      .gap-6 {
+        gap: 0.75rem;
       }
     }
   `;
@@ -652,18 +679,25 @@ async function buildAPIDocumentation(outputPath) {
     .optional {
       color: #fca130;
     }
+
+    .redoc-container {
+      min-height: 40rem;
+      margin-top: 2rem;
+    }
   </style>
 </head>
-<body class="bg-loom">
-  <div class="nav-sticky">
+<body>
+  <div class="bg-loom">
+  <div class="navbar nav-sticky">
     <div class="max-w-4xl mx-auto px-5 py-4 flex items-center justify-between">
       <div class="font-bold text-lg text-indigo-600">SDN OpenAPI</div>
       <div class="flex gap-6 ml-auto">
-        <a href="/" class="text-sm font-medium text-gray-600 hover:text-indigo-600 transition">Home</a>
-        <a href="/docs.html" class="text-sm font-medium text-gray-600 hover:text-indigo-600 transition">ReDoc</a>
-        <a href="/swagger-ui.html" class="text-sm font-medium text-gray-600 hover:text-indigo-600 transition">Swagger</a>
-        <a href="/usage-guide.html" class="text-sm font-medium text-gray-600 hover:text-indigo-600 transition">Usage</a>
-        <a href="/about.html" class="text-sm font-medium text-gray-600 hover:text-indigo-600 transition">About</a>
+        <a href="/" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">Home</a>
+        <a href="/docs.html" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">ReDoc</a>
+        <a href="/swagger-ui.html" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">Swagger</a>
+        <a href="/api-docs.html" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">API Docs</a>
+        <a href="/usage-guide.html" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">Usage Guide</a>
+        <a href="/about.html" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">About</a>
       </div>
     </div>
   </div>
@@ -675,7 +709,7 @@ async function buildAPIDocumentation(outputPath) {
         <p>OFAC SDN JSON Wrapper API - Unofficial JSON wrapper for OFAC Sanctions List Service exports.</p>
 
         <h2><ion-icon name="code"></ion-icon> Base URL</h2>
-        <p><code>https://YOUR-SITE.netlify.app</code></p>
+        <p><code>https://sdn-openapi.netlify.app</code></p>
 
         <h2><ion-icon name="list"></ion-icon> Endpoints</h2>
 
@@ -845,9 +879,19 @@ async function buildAPIDocumentation(outputPath) {
   "error": "Error message",
   "code": "ERROR_CODE"
 }</code></div>
+        <h2>Interactive OpenAPI Reference</h2>
+        <div class="redoc-container">
+          <redoc spec-url='../openapi.yaml'></redoc>
+        </div>
       </article>
+      <footer class="footer">
+        Built by Robert Melrose · <a href="https://devs.miami">devs.miami</a> ·
+        <a href="https://github.com/melroser/sdn-openapi">GitHub</a>
+      </footer>
     </div>
   </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js"></script>
 </body>
 </html>`;
 
@@ -963,6 +1007,11 @@ async function build() {
     await buildMarkdownFile(
       path.join(docsDir, 'landing.md'),
       path.join(publicDir, 'index.html')
+    );
+
+    // Build static API docs overview
+    await buildAPIDocumentation(
+      path.join(publicDir, 'api-docs.html')
     );
 
     // Build Swagger UI docs

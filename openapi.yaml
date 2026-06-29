@@ -30,7 +30,8 @@ paths:
         - Metadata
       summary: Get dataset metadata
       description: >
-        Retrieve information about the current dataset including last update time and record count.
+        Retrieve information about the current dataset including source URLs, fetch time, row counts,
+        source file hashes, and the latest refresh delta summary.
         
         Check dataset metadata and freshness to ensure you're working with current data.
         API requests are rate-limited to 100 requests per minute per IP address.
@@ -43,24 +44,71 @@ paths:
               schema:
                 type: object
                 properties:
-                  lastUpdated:
+                  fetchedAt:
                     type: string
                     format: date-time
                     description: ISO 8601 timestamp of last data refresh
-                  recordCount:
-                    type: integer
-                    description: Total number of entities in the dataset
-                  version:
-                    type: string
-                    description: API version
+                  source:
+                    type: object
+                    properties:
+                      sdnUrl:
+                        type: string
+                        format: uri
+                      altUrl:
+                        type: string
+                        format: uri
+                      addUrl:
+                        type: string
+                        format: uri
+                  counts:
+                    type: object
+                    properties:
+                      sdnRows:
+                        type: integer
+                      altRows:
+                        type: integer
+                      addRows:
+                        type: integer
+                      entities:
+                        type: integer
+                  hashes:
+                    type: object
+                    properties:
+                      sdnSha256:
+                        type: string
+                      altSha256:
+                        type: string
+                      addSha256:
+                        type: string
+                  delta:
+                    type: object
+                    properties:
+                      addedCount:
+                        type: integer
+                      removedCount:
+                        type: integer
+                      changedCount:
+                        type: integer
                 required:
-                  - lastUpdated
-                  - recordCount
-                  - version
+                  - fetchedAt
+                  - source
+                  - counts
+                  - hashes
               example:
-                lastUpdated: "2024-01-13T00:00:00Z"
-                recordCount: 12345
-                version: "1.0.0"
+                fetchedAt: "2026-06-29T06:00:35.535Z"
+                source:
+                  sdnUrl: "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.CSV"
+                  altUrl: "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/ALT.CSV"
+                  addUrl: "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/ADD.CSV"
+                counts:
+                  sdnRows: 19123
+                  altRows: 20307
+                  addRows: 24896
+                  entities: 19122
+                hashes:
+                  sdnSha256: "96f40a145e41cb22616efeaf15e36ba3ac17ab8bd1a7f8b23e8ff977584b9073"
+                  altSha256: "f26cea0edcf21932fb2039e5787aff32401c72e827e67a51013a5491e4a246b7"
+                  addSha256: "b0fc427d52193ec4654cc41999e79464588910064981f2d44748ad360e97f7d9"
   /api/search:
     get:
       tags:
@@ -95,6 +143,13 @@ paths:
               schema:
                 type: object
                 properties:
+                  ok:
+                    type: boolean
+                  q:
+                    type: string
+                  count:
+                    type: integer
+                    description: Number of returned matches
                   results:
                     type: array
                     items:
@@ -119,13 +174,15 @@ paths:
                         - name
                         - type
                         - score
-                  total:
-                    type: integer
-                    description: Total number of matches found
                 required:
+                  - ok
+                  - q
+                  - count
                   - results
-                  - total
               example:
+                ok: true
+                q: "Maduro"
+                count: 2
                 results:
                   - uid: "12345"
                     name: "Nicolás Maduro"
@@ -135,7 +192,6 @@ paths:
                     name: "Nicolás Maduro Moros"
                     type: "Individual"
                     score: 0.85
-                total: 2
         "400":
           description: Bad request - missing or invalid query parameter
           content:
@@ -173,52 +229,56 @@ paths:
               schema:
                 type: object
                 properties:
-                  uid:
-                    type: string
-                  name:
-                    type: string
-                  type:
-                    type: string
-                    enum: [Individual, Entity]
-                  aliases:
-                    type: array
-                    items:
-                      type: string
-                  addresses:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        address:
+                  ok:
+                    type: boolean
+                  entity:
+                    type: object
+                    properties:
+                      uid:
+                        type: string
+                      name:
+                        type: string
+                      type:
+                        type: string
+                      programs:
+                        type: array
+                        items:
                           type: string
-                        city:
+                      remarks:
+                        type: string
+                      aka:
+                        type: array
+                        items:
                           type: string
-                        country:
-                          type: string
-                  dateOfBirth:
-                    type: string
-                    format: date
-                    nullable: true
-                  placeOfBirth:
-                    type: string
-                    nullable: true
+                      addresses:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            city:
+                              type: string
+                            country:
+                              type: string
                 required:
-                  - uid
-                  - name
-                  - type
+                  - ok
+                  - entity
               example:
-                uid: "12345"
-                name: "Nicolás Maduro"
-                type: "Individual"
-                aliases:
-                  - "Nicolás Maduro Moros"
-                  - "Maduro"
-                addresses:
-                  - address: "Miraflores Palace"
-                    city: "Caracas"
-                    country: "Venezuela"
-                dateOfBirth: "1962-11-23"
-                placeOfBirth: "Caracas"
+                ok: true
+                entity:
+                  uid: "12345"
+                  name: "Nicolás Maduro"
+                  type: "Individual"
+                  aka:
+                    - "Nicolás Maduro Moros"
+                    - "Maduro"
+                  programs:
+                    - "VENEZUELA"
+                  addresses:
+                    - address: "Miraflores Palace"
+                      city: "Caracas"
+                      country: "Venezuela"
         "404":
           description: Entity not found
           content:
@@ -239,9 +299,16 @@ paths:
         - Admin
       summary: Trigger manual dataset refresh
       description: >
-        Manually trigger a refresh of the OFAC dataset. This endpoint is optional and may require
-        authentication via a shared secret header. Useful for keeping data current between scheduled updates.
+        Manually trigger a refresh of the OFAC dataset. Manual calls require the configured update
+        secret via X-Update-Secret, X-API-Key, Authorization Bearer token, or JSON secret body.
       operationId: triggerUpdate
+      parameters:
+        - in: header
+          name: X-Update-Secret
+          required: false
+          schema:
+            type: string
+          description: Shared secret for manual update authentication
       requestBody:
         required: false
         content:
@@ -251,7 +318,7 @@ paths:
               properties:
                 secret:
                   type: string
-                  description: Optional shared secret for authentication
+                  description: Shared secret for manual update authentication
       responses:
         "200":
           description: Update triggered successfully
@@ -260,13 +327,20 @@ paths:
               schema:
                 type: object
                 properties:
-                  status:
-                    type: string
-                  message:
-                    type: string
+                  ok:
+                    type: boolean
+                  meta:
+                    type: object
               example:
-                status: "success"
-                message: "Dataset refresh initiated"
+                ok: true
+                meta:
+                  fetchedAt: "2026-06-29T06:00:35.535Z"
+                  counts:
+                    entities: 19122
+                  delta:
+                    addedCount: 0
+                    removedCount: 0
+                    changedCount: 0
         "401":
           description: Unauthorized - invalid or missing secret
           content:

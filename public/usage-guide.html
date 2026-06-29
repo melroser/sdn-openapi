@@ -14,6 +14,8 @@
     /* LIGHT THEME */
     :root {
       color-scheme: light;
+      --primary-color: #6366f1;
+      --accent-color: #00d4ff;
       
       /* Loom-ish background knobs */
       --loom-bg: #ffffff;
@@ -267,6 +269,14 @@
       color: inherit;
     }
 
+    .hljs-string {
+      color: #0f766e;
+    }
+
+    .hljs-number {
+      color: #7c3aed;
+    }
+
     /* Buttons */
     .btn {
       display: inline-flex;
@@ -411,15 +421,26 @@
         font-size: 0.75rem;
       }
     }
+
+    @media (max-width: 480px) {
+      .flex {
+        flex-wrap: wrap;
+      }
+
+      .gap-6 {
+        gap: 0.75rem;
+      }
+    }
   
   </style>
 </head>
-<body class="bg-loom">
-  <div class="nav-sticky">
+<body>
+  <div class="bg-loom">
+  <div class="navbar nav-sticky">
     <div class="max-w-4xl mx-auto px-5 py-4 flex items-center justify-between">
       <div class="font-bold text-lg text-indigo-600">SDN OpenAPI</div>
       <div class="flex gap-6 ml-auto">
-        <a href="/docs.html" class="nav-link">ReDoc</a><a href="/swagger-ui.html" class="nav-link">Swagger UI</a><a href="/usage-guide.html" class="nav-link">Usage Guide</a><a href="/about.html" class="nav-link">About</a><a href="https://github.com" class="nav-link">GitHub</a>
+        <a href="/docs.html" class="nav-link">ReDoc</a><a href="/swagger-ui.html" class="nav-link">Swagger UI</a><a href="/usage-guide.html" class="nav-link">Usage Guide</a><a href="/about.html" class="nav-link">About</a><a href="https://github.com/melroser/sdn-openapi" class="nav-link">GitHub</a>
       </div>
     </div>
   </div>
@@ -435,17 +456,20 @@
 <p>The OFAC API is a REST API—no installation required. Simply make HTTP requests to the API endpoints.</p>
 <h3>Your First Request</h3>
 <p>Get started in seconds with a simple search request:</p>
-<pre><code class="hljs language-bash">curl <span class="hljs-string">&quot;https://YOUR-SITE.netlify.app/api/search?q=maduro&quot;</span></code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// JavaScript/Node.js</span>
-<span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">&#x27;https://YOUR-SITE.netlify.app/api/search?q=maduro&#x27;</span>);
+<pre><code class="hljs language-bash">curl <span class="hljs-string">&quot;https://sdn-openapi.netlify.app/api/search?q=maduro&quot;</span></code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// JavaScript/Node.js</span>
+<span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">&#x27;https://sdn-openapi.netlify.app/api/search?q=maduro&#x27;</span>);
 <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> response.<span class="hljs-title function_">json</span>();
 <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(data);</code></pre><pre><code class="hljs language-python"><span class="hljs-comment"># Python</span>
 <span class="hljs-keyword">import</span> requests
 
-response = requests.get(<span class="hljs-string">&#x27;https://YOUR-SITE.netlify.app/api/search?q=maduro&#x27;</span>)
+response = requests.get(<span class="hljs-string">&#x27;https://sdn-openapi.netlify.app/api/search?q=maduro&#x27;</span>)
 data = response.json()
 <span class="hljs-built_in">print</span>(data)</code></pre><h3>Response Format</h3>
 <p>All responses are JSON with a consistent structure:</p>
 <pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;ok&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;q&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;maduro&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;count&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
   <span class="hljs-attr">&quot;results&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
     <span class="hljs-punctuation">{</span>
       <span class="hljs-attr">&quot;uid&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;12345&quot;</span><span class="hljs-punctuation">,</span>
@@ -453,16 +477,15 @@ data = response.json()
       <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Individual&quot;</span><span class="hljs-punctuation">,</span>
       <span class="hljs-attr">&quot;score&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0.98</span>
     <span class="hljs-punctuation">}</span>
-  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;total&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>
+  <span class="hljs-punctuation">]</span>
 <span class="hljs-punctuation">}</span></code></pre><hr>
 <h2>Searching for Entities</h2>
 <h3>Basic Search</h3>
 <p>Search for entities by name using fuzzy matching. The API returns results ranked by relevance.</p>
-<pre><code class="hljs language-bash">curl <span class="hljs-string">&quot;https://YOUR-SITE.netlify.app/api/search?q=gazprom&quot;</span></code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Search for a company</span>
+<pre><code class="hljs language-bash">curl <span class="hljs-string">&quot;https://sdn-openapi.netlify.app/api/search?q=gazprom&quot;</span></code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Search for a company</span>
 <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">searchEntities</span>(<span class="hljs-params">query</span>) {
   <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(
-    <span class="hljs-string">`https://YOUR-SITE.netlify.app/api/search?q=<span class="hljs-subst">${<span class="hljs-built_in">encodeURIComponent</span>(query)}</span>`</span>
+    <span class="hljs-string">`https://sdn-openapi.netlify.app/api/search?q=<span class="hljs-subst">${<span class="hljs-built_in">encodeURIComponent</span>(query)}</span>`</span>
   );
   <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> response.<span class="hljs-title function_">json</span>();
   <span class="hljs-keyword">return</span> data.<span class="hljs-property">results</span>;
@@ -477,7 +500,7 @@ results.<span class="hljs-title function_">forEach</span>(<span class="hljs-func
 
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">search_entities</span>(<span class="hljs-params">query</span>):
     response = requests.get(
-        <span class="hljs-string">&#x27;https://YOUR-SITE.netlify.app/api/search&#x27;</span>,
+        <span class="hljs-string">&#x27;https://sdn-openapi.netlify.app/api/search&#x27;</span>,
         params={<span class="hljs-string">&#x27;q&#x27;</span>: query}
     )
     <span class="hljs-keyword">return</span> response.json()[<span class="hljs-string">&#x27;results&#x27;</span>]
@@ -488,7 +511,7 @@ results = search_entities(<span class="hljs-string">&#x27;gazprom&#x27;</span>)
     <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;<span class="hljs-subst">{entity[<span class="hljs-string">&#x27;name&#x27;</span>]}</span> (<span class="hljs-subst">{entity[<span class="hljs-string">&#x27;type&#x27;</span>]}</span>) - Score: <span class="hljs-subst">{entity[<span class="hljs-string">&#x27;score&#x27;</span>]}</span>&quot;</span>)</code></pre><h3>Advanced Search with Limits</h3>
 <p>Control the number of results returned:</p>
 <pre><code class="hljs language-bash"><span class="hljs-comment"># Get top 5 results</span>
-curl <span class="hljs-string">&quot;https://YOUR-SITE.netlify.app/api/search?q=maduro&amp;limit=5&quot;</span></code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Get top 10 results</span>
+curl <span class="hljs-string">&quot;https://sdn-openapi.netlify.app/api/search?q=maduro&amp;limit=5&quot;</span></code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Get top 10 results</span>
 <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">searchWithLimit</span>(<span class="hljs-params">query, limit = <span class="hljs-number">10</span></span>) {
   <span class="hljs-keyword">const</span> params = <span class="hljs-keyword">new</span> <span class="hljs-title class_">URLSearchParams</span>({
     <span class="hljs-attr">q</span>: query,
@@ -496,16 +519,16 @@ curl <span class="hljs-string">&quot;https://YOUR-SITE.netlify.app/api/search?q=
   });
   
   <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(
-    <span class="hljs-string">`https://YOUR-SITE.netlify.app/api/search?<span class="hljs-subst">${params}</span>`</span>
+    <span class="hljs-string">`https://sdn-openapi.netlify.app/api/search?<span class="hljs-subst">${params}</span>`</span>
   );
   <span class="hljs-keyword">return</span> response.<span class="hljs-title function_">json</span>();
 }
 
 <span class="hljs-keyword">const</span> results = <span class="hljs-keyword">await</span> <span class="hljs-title function_">searchWithLimit</span>(<span class="hljs-string">&#x27;maduro&#x27;</span>, <span class="hljs-number">10</span>);
-<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Found <span class="hljs-subst">${results.total}</span> matches, showing <span class="hljs-subst">${results.results.length}</span>`</span>);</code></pre><pre><code class="hljs language-python"><span class="hljs-comment"># Python with limit</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Found <span class="hljs-subst">${results.count}</span> matches, showing <span class="hljs-subst">${results.results.length}</span>`</span>);</code></pre><pre><code class="hljs language-python"><span class="hljs-comment"># Python with limit</span>
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">search_with_limit</span>(<span class="hljs-params">query, limit=<span class="hljs-number">10</span></span>):
     response = requests.get(
-        <span class="hljs-string">&#x27;https://YOUR-SITE.netlify.app/api/search&#x27;</span>,
+        <span class="hljs-string">&#x27;https://sdn-openapi.netlify.app/api/search&#x27;</span>,
         params={
             <span class="hljs-string">&#x27;q&#x27;</span>: query,
             <span class="hljs-string">&#x27;limit&#x27;</span>: <span class="hljs-built_in">min</span>(limit, <span class="hljs-number">50</span>)  <span class="hljs-comment"># Max 50 results</span>
@@ -514,12 +537,12 @@ curl <span class="hljs-string">&quot;https://YOUR-SITE.netlify.app/api/search?q=
     <span class="hljs-keyword">return</span> response.json()
 
 results = search_with_limit(<span class="hljs-string">&#x27;maduro&#x27;</span>, <span class="hljs-number">10</span>)
-<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Found <span class="hljs-subst">{results[<span class="hljs-string">&#x27;total&#x27;</span>]}</span> matches&quot;</span>)</code></pre><h3>Handling Search Results</h3>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Found <span class="hljs-subst">{results[<span class="hljs-string">&#x27;count&#x27;</span>]}</span> matches&quot;</span>)</code></pre><h3>Handling Search Results</h3>
 <p>Process search results and filter by entity type:</p>
 <pre><code class="hljs language-javascript"><span class="hljs-comment">// Filter results by type</span>
 <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">searchByType</span>(<span class="hljs-params">query, entityType</span>) {
   <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(
-    <span class="hljs-string">`https://YOUR-SITE.netlify.app/api/search?q=<span class="hljs-subst">${<span class="hljs-built_in">encodeURIComponent</span>(query)}</span>`</span>
+    <span class="hljs-string">`https://sdn-openapi.netlify.app/api/search?q=<span class="hljs-subst">${<span class="hljs-built_in">encodeURIComponent</span>(query)}</span>`</span>
   );
   <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> response.<span class="hljs-title function_">json</span>();
   
@@ -533,7 +556,7 @@ results = search_with_limit(<span class="hljs-string">&#x27;maduro&#x27;</span>,
 <span class="hljs-keyword">const</span> companies = <span class="hljs-keyword">await</span> <span class="hljs-title function_">searchByType</span>(<span class="hljs-string">&#x27;pdvsa&#x27;</span>, <span class="hljs-string">&#x27;Entity&#x27;</span>);</code></pre><pre><code class="hljs language-python"><span class="hljs-comment"># Filter by entity type</span>
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">search_by_type</span>(<span class="hljs-params">query, entity_type</span>):
     response = requests.get(
-        <span class="hljs-string">&#x27;https://YOUR-SITE.netlify.app/api/search&#x27;</span>,
+        <span class="hljs-string">&#x27;https://sdn-openapi.netlify.app/api/search&#x27;</span>,
         params={<span class="hljs-string">&#x27;q&#x27;</span>: query}
     )
     data = response.json()
@@ -549,17 +572,18 @@ companies = search_by_type(<span class="hljs-string">&#x27;pdvsa&#x27;</span>, <
 <h2>Retrieving Entity Details</h2>
 <h3>Get Full Entity Information</h3>
 <p>Once you have an entity UID from search results, retrieve complete details:</p>
-<pre><code class="hljs language-bash">curl <span class="hljs-string">&quot;https://YOUR-SITE.netlify.app/api/entity/12345&quot;</span></code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Get entity details</span>
+<pre><code class="hljs language-bash">curl <span class="hljs-string">&quot;https://sdn-openapi.netlify.app/api/entity/12345&quot;</span></code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Get entity details</span>
 <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">getEntityDetails</span>(<span class="hljs-params">uid</span>) {
   <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(
-    <span class="hljs-string">`https://YOUR-SITE.netlify.app/api/entity/<span class="hljs-subst">${uid}</span>`</span>
+    <span class="hljs-string">`https://sdn-openapi.netlify.app/api/entity/<span class="hljs-subst">${uid}</span>`</span>
   );
   
   <span class="hljs-keyword">if</span> (!response.<span class="hljs-property">ok</span>) {
     <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">`Entity not found: <span class="hljs-subst">${uid}</span>`</span>);
   }
   
-  <span class="hljs-keyword">return</span> response.<span class="hljs-title function_">json</span>();
+  <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> response.<span class="hljs-title function_">json</span>();
+  <span class="hljs-keyword">return</span> data.<span class="hljs-property">entity</span>;
 }
 
 <span class="hljs-comment">// Usage</span>
@@ -567,9 +591,8 @@ companies = search_by_type(<span class="hljs-string">&#x27;pdvsa&#x27;</span>, <
   <span class="hljs-keyword">const</span> entity = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getEntityDetails</span>(<span class="hljs-string">&#x27;12345&#x27;</span>);
   <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Name: <span class="hljs-subst">${entity.name}</span>`</span>);
   <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Type: <span class="hljs-subst">${entity.type}</span>`</span>);
-  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Aliases: <span class="hljs-subst">${entity.aliases.join(<span class="hljs-string">&#x27;, &#x27;</span>)}</span>`</span>);
-  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Date of Birth: <span class="hljs-subst">${entity.dateOfBirth}</span>`</span>);
-  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Place of Birth: <span class="hljs-subst">${entity.placeOfBirth}</span>`</span>);
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Aliases: <span class="hljs-subst">${entity.aka.join(<span class="hljs-string">&#x27;, &#x27;</span>)}</span>`</span>);
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Programs: <span class="hljs-subst">${entity.programs.join(<span class="hljs-string">&#x27;, &#x27;</span>)}</span>`</span>);
   
   <span class="hljs-comment">// Display addresses</span>
   entity.<span class="hljs-property">addresses</span>.<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">addr</span> =&gt;</span> {
@@ -580,22 +603,21 @@ companies = search_by_type(<span class="hljs-string">&#x27;pdvsa&#x27;</span>, <
 }</code></pre><pre><code class="hljs language-python"><span class="hljs-comment"># Get entity details</span>
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">get_entity_details</span>(<span class="hljs-params">uid</span>):
     response = requests.get(
-        <span class="hljs-string">f&#x27;https://YOUR-SITE.netlify.app/api/entity/<span class="hljs-subst">{uid}</span>&#x27;</span>
+        <span class="hljs-string">f&#x27;https://sdn-openapi.netlify.app/api/entity/<span class="hljs-subst">{uid}</span>&#x27;</span>
     )
     
     <span class="hljs-keyword">if</span> response.status_code == <span class="hljs-number">404</span>:
         <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">f&#x27;Entity not found: <span class="hljs-subst">{uid}</span>&#x27;</span>)
     
-    <span class="hljs-keyword">return</span> response.json()
+    <span class="hljs-keyword">return</span> response.json()[<span class="hljs-string">&#x27;entity&#x27;</span>]
 
 <span class="hljs-comment"># Usage</span>
 <span class="hljs-keyword">try</span>:
     entity = get_entity_details(<span class="hljs-string">&#x27;12345&#x27;</span>)
     <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Name: <span class="hljs-subst">{entity[<span class="hljs-string">&#x27;name&#x27;</span>]}</span>&quot;</span>)
     <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Type: <span class="hljs-subst">{entity[<span class="hljs-string">&#x27;type&#x27;</span>]}</span>&quot;</span>)
-    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Aliases: <span class="hljs-subst">{<span class="hljs-string">&#x27;, &#x27;</span>.join(entity[<span class="hljs-string">&#x27;aliases&#x27;</span>])}</span>&quot;</span>)
-    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Date of Birth: <span class="hljs-subst">{entity.get(<span class="hljs-string">&#x27;dateOfBirth&#x27;</span>)}</span>&quot;</span>)
-    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Place of Birth: <span class="hljs-subst">{entity.get(<span class="hljs-string">&#x27;placeOfBirth&#x27;</span>)}</span>&quot;</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Aliases: <span class="hljs-subst">{<span class="hljs-string">&#x27;, &#x27;</span>.join(entity[<span class="hljs-string">&#x27;aka&#x27;</span>])}</span>&quot;</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Programs: <span class="hljs-subst">{<span class="hljs-string">&#x27;, &#x27;</span>.join(entity[<span class="hljs-string">&#x27;programs&#x27;</span>])}</span>&quot;</span>)
     
     <span class="hljs-comment"># Display addresses</span>
     <span class="hljs-keyword">for</span> addr <span class="hljs-keyword">in</span> entity[<span class="hljs-string">&#x27;addresses&#x27;</span>]:
@@ -607,7 +629,7 @@ companies = search_by_type(<span class="hljs-string">&#x27;pdvsa&#x27;</span>, <
 <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">complianceCheck</span>(<span class="hljs-params">name</span>) {
   <span class="hljs-comment">// Step 1: Search for the entity</span>
   <span class="hljs-keyword">const</span> searchResponse = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(
-    <span class="hljs-string">`https://YOUR-SITE.netlify.app/api/search?q=<span class="hljs-subst">${<span class="hljs-built_in">encodeURIComponent</span>(name)}</span>`</span>
+    <span class="hljs-string">`https://sdn-openapi.netlify.app/api/search?q=<span class="hljs-subst">${<span class="hljs-built_in">encodeURIComponent</span>(name)}</span>`</span>
   );
   <span class="hljs-keyword">const</span> searchData = <span class="hljs-keyword">await</span> searchResponse.<span class="hljs-title function_">json</span>();
   
@@ -618,14 +640,14 @@ companies = search_by_type(<span class="hljs-string">&#x27;pdvsa&#x27;</span>, <
   <span class="hljs-comment">// Step 2: Get details for top match</span>
   <span class="hljs-keyword">const</span> topMatch = searchData.<span class="hljs-property">results</span>[<span class="hljs-number">0</span>];
   <span class="hljs-keyword">const</span> entityResponse = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(
-    <span class="hljs-string">`https://YOUR-SITE.netlify.app/api/entity/<span class="hljs-subst">${topMatch.uid}</span>`</span>
+    <span class="hljs-string">`https://sdn-openapi.netlify.app/api/entity/<span class="hljs-subst">${topMatch.uid}</span>`</span>
   );
   <span class="hljs-keyword">const</span> entityData = <span class="hljs-keyword">await</span> entityResponse.<span class="hljs-title function_">json</span>();
   
   <span class="hljs-keyword">return</span> {
     <span class="hljs-attr">status</span>: <span class="hljs-string">&#x27;match_found&#x27;</span>,
     <span class="hljs-attr">confidence</span>: topMatch.<span class="hljs-property">score</span>,
-    <span class="hljs-attr">entity</span>: entityData
+    <span class="hljs-attr">entity</span>: entityData.<span class="hljs-property">entity</span>
   };
 }
 
@@ -640,7 +662,7 @@ companies = search_by_type(<span class="hljs-string">&#x27;pdvsa&#x27;</span>, <
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">compliance_check</span>(<span class="hljs-params">name</span>):
     <span class="hljs-comment"># Step 1: Search for the entity</span>
     search_response = requests.get(
-        <span class="hljs-string">&#x27;https://YOUR-SITE.netlify.app/api/search&#x27;</span>,
+        <span class="hljs-string">&#x27;https://sdn-openapi.netlify.app/api/search&#x27;</span>,
         params={<span class="hljs-string">&#x27;q&#x27;</span>: name}
     )
     search_data = search_response.json()
@@ -651,9 +673,9 @@ companies = search_by_type(<span class="hljs-string">&#x27;pdvsa&#x27;</span>, <
     <span class="hljs-comment"># Step 2: Get details for top match</span>
     top_match = search_data[<span class="hljs-string">&#x27;results&#x27;</span>][<span class="hljs-number">0</span>]
     entity_response = requests.get(
-        <span class="hljs-string">f&quot;https://YOUR-SITE.netlify.app/api/entity/<span class="hljs-subst">{top_match[<span class="hljs-string">&#x27;uid&#x27;</span>]}</span>&quot;</span>
+        <span class="hljs-string">f&quot;https://sdn-openapi.netlify.app/api/entity/<span class="hljs-subst">{top_match[<span class="hljs-string">&#x27;uid&#x27;</span>]}</span>&quot;</span>
     )
-    entity_data = entity_response.json()
+    entity_data = entity_response.json()[<span class="hljs-string">&#x27;entity&#x27;</span>]
     
     <span class="hljs-keyword">return</span> {
         <span class="hljs-string">&#x27;status&#x27;</span>: <span class="hljs-string">&#x27;match_found&#x27;</span>,
@@ -664,38 +686,38 @@ companies = search_by_type(<span class="hljs-string">&#x27;pdvsa&#x27;</span>, <
 <span class="hljs-comment"># Usage</span>
 result = compliance_check(<span class="hljs-string">&#x27;Nicolás Maduro&#x27;</span>)
 <span class="hljs-keyword">if</span> result[<span class="hljs-string">&#x27;status&#x27;</span>] == <span class="hljs-string">&#x27;match_found&#x27;</span>:
-    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;⚠️ Match found with <span class="hljs-subst">{result[<span class="hljs-string">&#x27;confidence&#x27;</span>]*<span class="hljs-number">100</span>:<span class="hljs-number">.1</span>f}</span>% confidence&quot;</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;⚠️ Match found with <span class="hljs-subst">{result[<span class="hljs-string">&#x27;confidence&#x27;</span>] * <span class="hljs-number">100</span>:<span class="hljs-number">.1</span>f}</span>% confidence&quot;</span>)
     <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Entity: <span class="hljs-subst">{result[<span class="hljs-string">&#x27;entity&#x27;</span>][<span class="hljs-string">&#x27;name&#x27;</span>]}</span>&quot;</span>)
 <span class="hljs-keyword">else</span>:
     <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;✓ No matches found - entity is clear&quot;</span>)</code></pre><hr>
 <h2>Checking Dataset Metadata</h2>
 <h3>Get Dataset Information</h3>
 <p>Check when the OFAC data was last updated and how many entities are in the database:</p>
-<pre><code class="hljs language-bash">curl <span class="hljs-string">&quot;https://YOUR-SITE.netlify.app/api/meta&quot;</span></code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Get metadata</span>
+<pre><code class="hljs language-bash">curl <span class="hljs-string">&quot;https://sdn-openapi.netlify.app/api/meta&quot;</span></code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Get metadata</span>
 <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">getMetadata</span>(<span class="hljs-params"></span>) {
-  <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">&#x27;https://YOUR-SITE.netlify.app/api/meta&#x27;</span>);
+  <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">&#x27;https://sdn-openapi.netlify.app/api/meta&#x27;</span>);
   <span class="hljs-keyword">return</span> response.<span class="hljs-title function_">json</span>();
 }
 
 <span class="hljs-comment">// Usage</span>
 <span class="hljs-keyword">const</span> meta = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getMetadata</span>();
-<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Last Updated: <span class="hljs-subst">${<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(meta.lastUpdated).toLocaleString()}</span>`</span>);
-<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Total Entities: <span class="hljs-subst">${meta.recordCount.toLocaleString()}</span>`</span>);
-<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`API Version: <span class="hljs-subst">${meta.version}</span>`</span>);</code></pre><pre><code class="hljs language-python"><span class="hljs-comment"># Get metadata</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Fetched At: <span class="hljs-subst">${<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(meta.fetchedAt).toLocaleString()}</span>`</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Total Entities: <span class="hljs-subst">${meta.counts.entities.toLocaleString()}</span>`</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`SDN Hash: <span class="hljs-subst">${meta.hashes.sdnSha256}</span>`</span>);</code></pre><pre><code class="hljs language-python"><span class="hljs-comment"># Get metadata</span>
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">get_metadata</span>():
-    response = requests.get(<span class="hljs-string">&#x27;https://YOUR-SITE.netlify.app/api/meta&#x27;</span>)
+    response = requests.get(<span class="hljs-string">&#x27;https://sdn-openapi.netlify.app/api/meta&#x27;</span>)
     <span class="hljs-keyword">return</span> response.json()
 
 <span class="hljs-comment"># Usage</span>
 meta = get_metadata()
-<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Last Updated: <span class="hljs-subst">{meta[<span class="hljs-string">&#x27;lastUpdated&#x27;</span>]}</span>&quot;</span>)
-<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Total Entities: <span class="hljs-subst">{meta[<span class="hljs-string">&#x27;recordCount&#x27;</span>]:,}</span>&quot;</span>)
-<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;API Version: <span class="hljs-subst">{meta[<span class="hljs-string">&#x27;version&#x27;</span>]}</span>&quot;</span>)</code></pre><h3>Check Data Freshness</h3>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Fetched At: <span class="hljs-subst">{meta[<span class="hljs-string">&#x27;fetchedAt&#x27;</span>]}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Total Entities: <span class="hljs-subst">{meta[<span class="hljs-string">&#x27;counts&#x27;</span>][<span class="hljs-string">&#x27;entities&#x27;</span>]:,}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;SDN Hash: <span class="hljs-subst">{meta[<span class="hljs-string">&#x27;hashes&#x27;</span>][<span class="hljs-string">&#x27;sdnSha256&#x27;</span>]}</span>&quot;</span>)</code></pre><h3>Check Data Freshness</h3>
 <p>Implement a data freshness check in your application:</p>
 <pre><code class="hljs language-javascript"><span class="hljs-comment">// Check if data is fresh (updated within last 24 hours)</span>
 <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">isDataFresh</span>(<span class="hljs-params"></span>) {
   <span class="hljs-keyword">const</span> meta = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getMetadata</span>();
-  <span class="hljs-keyword">const</span> lastUpdate = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>(meta.<span class="hljs-property">lastUpdated</span>);
+  <span class="hljs-keyword">const</span> lastUpdate = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>(meta.<span class="hljs-property">fetchedAt</span>);
   <span class="hljs-keyword">const</span> now = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>();
   <span class="hljs-keyword">const</span> hoursSinceUpdate = (now - lastUpdate) / (<span class="hljs-number">1000</span> * <span class="hljs-number">60</span> * <span class="hljs-number">60</span>);
   
@@ -712,7 +734,7 @@ meta = get_metadata()
 
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">is_data_fresh</span>():
     meta = get_metadata()
-    last_update = datetime.fromisoformat(meta[<span class="hljs-string">&#x27;lastUpdated&#x27;</span>].replace(<span class="hljs-string">&#x27;Z&#x27;</span>, <span class="hljs-string">&#x27;+00:00&#x27;</span>))
+    last_update = datetime.fromisoformat(meta[<span class="hljs-string">&#x27;fetchedAt&#x27;</span>].replace(<span class="hljs-string">&#x27;Z&#x27;</span>, <span class="hljs-string">&#x27;+00:00&#x27;</span>))
     now = datetime.now(last_update.tzinfo)
     hours_since_update = (now - last_update).total_seconds() / <span class="hljs-number">3600</span>
     
@@ -757,7 +779,7 @@ meta = get_metadata()
 }
 
 <span class="hljs-comment">// Usage</span>
-<span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetchWithRetry</span>(<span class="hljs-string">&#x27;https://YOUR-SITE.netlify.app/api/search?q=maduro&#x27;</span>);</code></pre><pre><code class="hljs language-python"><span class="hljs-comment"># Retry with exponential backoff</span>
+<span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetchWithRetry</span>(<span class="hljs-string">&#x27;https://sdn-openapi.netlify.app/api/search?q=maduro&#x27;</span>);</code></pre><pre><code class="hljs language-python"><span class="hljs-comment"># Retry with exponential backoff</span>
 <span class="hljs-keyword">import</span> time
 
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">fetch_with_retry</span>(<span class="hljs-params">url, max_retries=<span class="hljs-number">3</span></span>):
@@ -777,7 +799,7 @@ meta = get_metadata()
     <span class="hljs-keyword">raise</span> Exception(<span class="hljs-string">&#x27;Max retries exceeded&#x27;</span>)
 
 <span class="hljs-comment"># Usage</span>
-data = fetch_with_retry(<span class="hljs-string">&#x27;https://YOUR-SITE.netlify.app/api/search?q=maduro&#x27;</span>)</code></pre><h3>Caching Strategies</h3>
+data = fetch_with_retry(<span class="hljs-string">&#x27;https://sdn-openapi.netlify.app/api/search?q=maduro&#x27;</span>)</code></pre><h3>Caching Strategies</h3>
 <p>Reduce API calls by implementing intelligent caching:</p>
 <pre><code class="hljs language-javascript"><span class="hljs-comment">// Simple in-memory cache with TTL</span>
 <span class="hljs-keyword">class</span> <span class="hljs-title class_">APICache</span> {
@@ -821,7 +843,7 @@ data = fetch_with_retry(<span class="hljs-string">&#x27;https://YOUR-SITE.netlif
   
   <span class="hljs-comment">// Fetch from API</span>
   <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(
-    <span class="hljs-string">`https://YOUR-SITE.netlify.app/api/search?q=<span class="hljs-subst">${<span class="hljs-built_in">encodeURIComponent</span>(query)}</span>`</span>
+    <span class="hljs-string">`https://sdn-openapi.netlify.app/api/search?q=<span class="hljs-subst">${<span class="hljs-built_in">encodeURIComponent</span>(query)}</span>`</span>
   );
   <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> response.<span class="hljs-title function_">json</span>();
   
@@ -867,7 +889,7 @@ cache = APICache(ttl_minutes=<span class="hljs-number">60</span>)
     
     <span class="hljs-comment"># Fetch from API</span>
     response = requests.get(
-        <span class="hljs-string">&#x27;https://YOUR-SITE.netlify.app/api/search&#x27;</span>,
+        <span class="hljs-string">&#x27;https://sdn-openapi.netlify.app/api/search&#x27;</span>,
         params={<span class="hljs-string">&#x27;q&#x27;</span>: query}
     )
     data = response.json()
@@ -889,10 +911,10 @@ cache = APICache(ttl_minutes=<span class="hljs-number">60</span>)
 <p><strong>Problem</strong>: Search request without a query parameter</p>
 <p><strong>Solution</strong>: Always include the <code>q</code> parameter:</p>
 <pre><code class="hljs language-bash"><span class="hljs-comment"># ❌ Wrong</span>
-curl <span class="hljs-string">&quot;https://YOUR-SITE.netlify.app/api/search&quot;</span>
+curl <span class="hljs-string">&quot;https://sdn-openapi.netlify.app/api/search&quot;</span>
 
 <span class="hljs-comment"># ✅ Correct</span>
-curl <span class="hljs-string">&quot;https://YOUR-SITE.netlify.app/api/search?q=maduro&quot;</span></code></pre><h4>&quot;Entity not found&quot;</h4>
+curl <span class="hljs-string">&quot;https://sdn-openapi.netlify.app/api/search?q=maduro&quot;</span></code></pre><h4>&quot;Entity not found&quot;</h4>
 <p><strong>Problem</strong>: Requesting an entity with an invalid UID</p>
 <p><strong>Solution</strong>: Verify the UID from a search result first:</p>
 <pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ Wrong - guessing UIDs</span>
@@ -966,7 +988,13 @@ curl <span class="hljs-string">&quot;https://YOUR-SITE.netlify.app/api/search?q=
 <p>Built with ❤️ by devs.miami</p>
 
       </article>
+      <footer class="footer">
+        Built by Robert Melrose · <a href="https://devs.miami">devs.miami</a> ·
+        <a href="https://github.com/melroser/sdn-openapi">GitHub</a>
+      </footer>
     </div>
+  </div>
+
   </div>
 
   <script>

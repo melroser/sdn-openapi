@@ -13,8 +13,13 @@
       "dependencies": [
         "npm:@netlify/blobs@8",
         "npm:@netlify/functions@2",
+        "npm:@types/node@20",
         "npm:csv-parse@^5.5.6",
-        "npm:fuse.js@7"
+        "npm:fast-check@^3.15.0",
+        "npm:fuse.js@7",
+        "npm:highlight.js@^11.9.0",
+        "npm:marked@^11.1.1",
+        "npm:vitest@^4.0.17"
       ]
     }
   }

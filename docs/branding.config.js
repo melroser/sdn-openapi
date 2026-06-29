@@ -25,7 +25,7 @@ export const brandingConfig = {
   
   // Social Links
   socialLinks: {
-    github: 'https://github.com',
+    github: 'https://github.com/melroser/sdn-openapi',
     twitter: 'https://twitter.com',
     linkedin: 'https://linkedin.com'
   },
@@ -36,7 +36,7 @@ export const brandingConfig = {
     { label: 'Swagger UI', href: '/swagger-ui.html' },
     { label: 'Usage Guide', href: '/usage-guide.html' },
     { label: 'About', href: '/about.html' },
-    { label: 'GitHub', href: 'https://github.com' }
+    { label: 'GitHub', href: 'https://github.com/melroser/sdn-openapi' }
   ]
 };
 

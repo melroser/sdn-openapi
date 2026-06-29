@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OFAC Sanctions API Demo | OFAC API</title>
-  <meta name="description" content="Professional documentation for the OFAC API by devs.miami">
+  <title>API Documentation | OFAC API</title>
+  <meta name="description" content="Interactive API documentation for the OFAC API by devs.miami">
   <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons/dist/ionicons/ionicons.esm.js"></script>
   <noscript><script src="https://cdn.jsdelivr.net/npm/ionicons/dist/ionicons/ionicons.js"></script></noscript>
   <style>
@@ -432,6 +432,123 @@
       }
     }
   
+    
+    .endpoint {
+      background-color: white;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-left: 4px solid #6366f1;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      border-radius: 0.5rem;
+    }
+
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .method {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 0.25rem;
+      font-weight: bold;
+      font-size: 0.75rem;
+      font-family: 'Fira Code', 'Courier New', monospace;
+    }
+
+    .method.get {
+      background-color: #61affe;
+      color: #fff;
+    }
+
+    .method.post {
+      background-color: #49cc90;
+      color: #fff;
+    }
+
+    .method.put {
+      background-color: #fca130;
+      color: #fff;
+    }
+
+    .method.delete {
+      background-color: #f93e3e;
+      color: #fff;
+    }
+
+    .path {
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 1rem;
+      color: #6366f1;
+    }
+
+    .endpoint-description {
+      color: #666666;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #09090b;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .param-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.875rem;
+    }
+
+    .param-table th,
+    .param-table td {
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 0.75rem;
+      text-align: left;
+    }
+
+    .param-table th {
+      background-color: #f9fafb;
+      color: #09090b;
+      font-weight: bold;
+    }
+
+    .param-table td {
+      background-color: white;
+    }
+
+    .response-example {
+      background-color: #f9fafb;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-left: 4px solid #6366f1;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 0.25rem;
+      overflow-x: auto;
+    }
+
+    .response-example code {
+      color: #374151;
+      font-size: 0.8rem;
+    }
+
+    .required {
+      color: #f93e3e;
+      font-weight: bold;
+    }
+
+    .optional {
+      color: #fca130;
+    }
+
+    .redoc-container {
+      min-height: 40rem;
+      margin-top: 2rem;
+    }
   </style>
 </head>
 <body>
@@ -440,7 +557,12 @@
     <div class="max-w-4xl mx-auto px-5 py-4 flex items-center justify-between">
       <div class="font-bold text-lg text-indigo-600">SDN OpenAPI</div>
       <div class="flex gap-6 ml-auto">
-        <a href="/docs.html" class="nav-link">ReDoc</a><a href="/swagger-ui.html" class="nav-link">Swagger UI</a><a href="/usage-guide.html" class="nav-link">Usage Guide</a><a href="/about.html" class="nav-link">About</a><a href="https://github.com/melroser/sdn-openapi" class="nav-link">GitHub</a>
+        <a href="/" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">Home</a>
+        <a href="/docs.html" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">ReDoc</a>
+        <a href="/swagger-ui.html" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">Swagger</a>
+        <a href="/api-docs.html" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">API Docs</a>
+        <a href="/usage-guide.html" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">Usage Guide</a>
+        <a href="/about.html" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">About</a>
       </div>
     </div>
   </div>
@@ -448,83 +570,184 @@
   <div class="max-w-4xl mx-auto px-5 py-12">
     <div class="loom-card bg-white rounded-lg p-10">
       <article class="content">
-        <h1>OFAC Sanctions API Demo</h1>
-<p>A TypeScript serverless API that exposes U.S. Treasury OFAC SDN data through a documented OpenAPI interface with Swagger UI, ReDoc, fuzzy search, entity lookup, metadata, scheduled data refresh, and refresh-delta metadata.</p>
-<p>Built as the compliance data layer for a larger financial intelligence prototype.</p>
-<pre><code class="hljs language-txt">GET /api/search?q=maduro
-GET /api/entity/{uid}
-GET /api/meta</code></pre><p><a href="/swagger-ui.html">Try in Swagger UI</a> · <a href="/docs.html">Read ReDoc</a> · <a href="https://github.com/melroser/sdn-openapi">View GitHub</a></p>
-<hr>
-<h2>What this demonstrates</h2>
-<h3>TypeScript API design</h3>
-<p>The API is implemented with Netlify Functions and a small, explicit REST surface for search, entity lookup, metadata, and controlled dataset refresh. It demonstrates a practical Serverless architecture for public compliance data.</p>
-<h3>OpenAPI documentation</h3>
-<p>The project includes an OpenAPI specification, Swagger UI, ReDoc, and practical cURL, JavaScript, and Python examples.</p>
-<h3>Compliance data integration</h3>
-<p>The data pipeline fetches OFAC Sanctions List Service CSV exports, parses SDN, alternate-name, and address files, and stores a compressed searchable dataset in Netlify Blobs.</p>
-<h3>Fuzzy search</h3>
-<p>Fuse.js powers approximate matching across entity names and aliases, which is useful for real screening workflows where names are often incomplete or spelled differently.</p>
-<h3>Production-style API patterns</h3>
-<p>The project demonstrates validation, structured JSON responses, cache headers, CORS handling, scheduled refresh design, update-secret authentication, and delta summaries between refreshes.</p>
-<hr>
-<h2>Financial intelligence context</h2>
-<p>This API began as the compliance data layer for a broader financial intelligence prototype: combine sanctions data, country-level signals, world news, AI-assisted sentiment analysis, and uncertainty modeling into a workflow for geopolitical risk research.</p>
-<p>The companion concept is <strong>ED 209</strong>, a Python FastAPI prototype that explores uncertainty-aware sanctions screening with Subjective Logic. Instead of treating a fuzzy match as a crude yes/no answer, the risk engine can explain which evidence is strong, which evidence is missing, and whether the next action should be clear, escalate, block, or gather more information.</p>
-<hr>
-<h2>Quick Start</h2>
-<p>Search for an entity:</p>
-<pre><code class="hljs language-bash">curl <span class="hljs-string">&quot;https://sdn-openapi.netlify.app/api/search?q=Maduro&amp;limit=5&quot;</span></code></pre><p>Example response shape:</p>
-<pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">&quot;ok&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;q&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Maduro&quot;</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;count&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;results&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-    <span class="hljs-punctuation">{</span>
-      <span class="hljs-attr">&quot;uid&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;22790&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;MADURO MOROS, Nicolas&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;individual&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">&quot;score&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0.06</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">&quot;programs&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;VENEZUELA&quot;</span><span class="hljs-punctuation">]</span>
-    <span class="hljs-punctuation">}</span>
-  <span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span></code></pre><p>Check dataset metadata:</p>
-<pre><code class="hljs language-bash">curl <span class="hljs-string">&quot;https://sdn-openapi.netlify.app/api/meta&quot;</span></code></pre><hr>
-<h2>Data Provenance and Freshness</h2>
-<p>All source data comes from the <strong>U.S. Treasury Office of Foreign Assets Control (OFAC)</strong> Sanctions List Service exports.</p>
-<p><strong>Official OFAC source:</strong> <a href="https://home.treasury.gov/policy-guidance/financial-sanctions-and-embargoes/specially-designated-nationals-and-blocked-persons-list-sdn-human-readable-lists">OFAC SDN Human-Readable Lists</a></p>
-<ul>
-<li><strong>Automatic refresh:</strong> scheduled Netlify Function</li>
-<li><strong>Manual refresh:</strong> <code>POST /api/update</code>, protected by a configured update secret</li>
-<li><strong>Source files:</strong> SDN, ALT, and ADD CSV exports</li>
-<li><strong>Verification:</strong> <code>/api/meta</code> exposes source URLs, row counts, SHA-256 hashes, and the latest refresh delta summary</li>
-</ul>
-<hr>
-<h2>API endpoints</h2>
-<h3><code>GET /api/search?q=query</code></h3>
-<p>Search OFAC-designated entities by name or alias using fuzzy matching.</p>
-<h3><code>GET /api/entity/{uid}</code></h3>
-<p>Retrieve the stored entity record for a specific OFAC entity UID.</p>
-<h3><code>GET /api/meta</code></h3>
-<p>Return dataset metadata, including source URLs, counts, hashes, refresh timestamp, and delta summary.</p>
-<h3><code>POST /api/update</code></h3>
-<p>Refresh the dataset from OFAC source files. Manual calls require the configured update secret.</p>
-<hr>
-<h2>Why this matters</h2>
-<p>Financial and compliance systems often need to reason about messy entity data. Names are misspelled, aliases differ, countries matter, and a fuzzy score alone does not explain whether a match should be blocked, ignored, or escalated.</p>
-<p>This project focuses on the API layer: making public sanctions data easy to query, document, verify, and integrate. The larger portfolio concept builds on this layer with uncertainty-aware screening and AI-assisted risk analysis.</p>
-<hr>
-<h2>Stack</h2>
-<ul>
-<li><strong>API:</strong> TypeScript, Netlify Functions</li>
-<li><strong>Storage:</strong> Netlify Blobs</li>
-<li><strong>Search:</strong> Fuse.js</li>
-<li><strong>Data source:</strong> U.S. Treasury OFAC SLS exports</li>
-<li><strong>Docs:</strong> OpenAPI, Swagger UI, ReDoc</li>
-<li><strong>Testing:</strong> Vitest</li>
-</ul>
-<hr>
-<p>Built by <a href="https://devs.miami">Robert Melrose</a> as a fintech engineering portfolio project.</p>
+        <h1>API Documentation</h1>
+        <p>OFAC SDN JSON Wrapper API - Unofficial JSON wrapper for OFAC Sanctions List Service exports.</p>
 
+        <h2><ion-icon name="code"></ion-icon> Base URL</h2>
+        <p><code>https://sdn-openapi.netlify.app</code></p>
+
+        <h2><ion-icon name="list"></ion-icon> Endpoints</h2>
+
+        <!-- GET /api/meta -->
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="path">/api/meta</span>
+          </div>
+          <p class="endpoint-description">Get dataset metadata including last update time and record count</p>
+          
+          <div class="section-title">Response</div>
+          <table class="param-table">
+            <tr>
+              <th>Field</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>lastUpdated</td>
+              <td>string (ISO 8601)</td>
+              <td>Timestamp of last data refresh</td>
+            </tr>
+            <tr>
+              <td>recordCount</td>
+              <td>integer</td>
+              <td>Total number of entities in dataset</td>
+            </tr>
+            <tr>
+              <td>version</td>
+              <td>string</td>
+              <td>API version</td>
+            </tr>
+          </table>
+
+          <div class="section-title">Example Response</div>
+          <div class="response-example"><code>{
+  "lastUpdated": "2024-01-13T00:00:00Z",
+  "recordCount": 12345,
+  "version": "1.0.0"
+}</code></div>
+        </div>
+
+        <!-- GET /api/search -->
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="path">/api/search</span>
+          </div>
+          <p class="endpoint-description">Fuzzy search SDN entities by name or alias</p>
+          
+          <div class="section-title">Query Parameters</div>
+          <table class="param-table">
+            <tr>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th>Required</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>q</td>
+              <td>string</td>
+              <td><span class="required">Yes</span></td>
+              <td>Search query (name or alias)</td>
+            </tr>
+            <tr>
+              <td>limit</td>
+              <td>integer</td>
+              <td><span class="optional">No</span></td>
+              <td>Max results (1-50, default: 20)</td>
+            </tr>
+          </table>
+
+          <div class="section-title">Example Request</div>
+          <div class="response-example"><code>GET /api/search?q=Maduro&limit=10</code></div>
+
+          <div class="section-title">Example Response</div>
+          <div class="response-example"><code>{
+  "results": [
+    {
+      "uid": "12345",
+      "name": "Nicolás Maduro",
+      "type": "Individual",
+      "score": 0.98
+    }
+  ],
+  "total": 1
+}</code></div>
+        </div>
+
+        <!-- GET /api/entity/{uid} -->
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <span class="path">/api/entity/{uid}</span>
+          </div>
+          <p class="endpoint-description">Get complete details for a specific entity</p>
+          
+          <div class="section-title">Path Parameters</div>
+          <table class="param-table">
+            <tr>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>uid</td>
+              <td>string</td>
+              <td>Entity unique identifier</td>
+            </tr>
+          </table>
+
+          <div class="section-title">Response Fields</div>
+          <table class="param-table">
+            <tr>
+              <th>Field</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>uid</td>
+              <td>string</td>
+              <td>Unique entity identifier</td>
+            </tr>
+            <tr>
+              <td>name</td>
+              <td>string</td>
+              <td>Primary entity name</td>
+            </tr>
+            <tr>
+              <td>type</td>
+              <td>string</td>
+              <td>Individual or Entity</td>
+            </tr>
+          </table>
+
+          <div class="section-title">Example Response</div>
+          <div class="response-example"><code>{
+  "uid": "12345",
+  "name": "Nicolás Maduro",
+  "type": "Individual",
+  "aliases": ["Nicolás Maduro Moros"],
+  "addresses": [{"address": "Miraflores Palace", "city": "Caracas", "country": "Venezuela"}],
+  "dateOfBirth": "1962-11-23",
+  "placeOfBirth": "Caracas"
+}</code></div>
+        </div>
+
+        <!-- POST /api/update -->
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <span class="path">/api/update</span>
+          </div>
+          <p class="endpoint-description">Trigger manual dataset refresh</p>
+          
+          <div class="section-title">Example Response</div>
+          <div class="response-example"><code>{
+  "status": "success",
+  "message": "Dataset refresh initiated"
+}</code></div>
+        </div>
+
+        <h2><ion-icon name="alert"></ion-icon> Error Responses</h2>
+        <p>All errors follow this format:</p>
+        <div class="response-example"><code>{
+  "error": "Error message",
+  "code": "ERROR_CODE"
+}</code></div>
+        <h2>Interactive OpenAPI Reference</h2>
+        <div class="redoc-container">
+          <redoc spec-url='../openapi.yaml'></redoc>
+        </div>
       </article>
       <footer class="footer">
         Built by Robert Melrose · <a href="https://devs.miami">devs.miami</a> ·
@@ -532,15 +755,7 @@ GET /api/meta</code></pre><p><a href="/swagger-ui.html">Try in Swagger UI</a> ·
       </footer>
     </div>
   </div>
-
   </div>
-
-  <script>
-    
-    // Syntax highlighting is applied during build time
-    // This script is a placeholder for any runtime enhancements
-    console.log('Documentation site loaded');
-  
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js"></script>
 </body>
 </html>

@@ -14,6 +14,8 @@
     /* LIGHT THEME */
     :root {
       color-scheme: light;
+      --primary-color: #6366f1;
+      --accent-color: #00d4ff;
       
       /* Loom-ish background knobs */
       --loom-bg: #ffffff;
@@ -267,6 +269,14 @@
       color: inherit;
     }
 
+    .hljs-string {
+      color: #0f766e;
+    }
+
+    .hljs-number {
+      color: #7c3aed;
+    }
+
     /* Buttons */
     .btn {
       display: inline-flex;
@@ -411,15 +421,26 @@
         font-size: 0.75rem;
       }
     }
+
+    @media (max-width: 480px) {
+      .flex {
+        flex-wrap: wrap;
+      }
+
+      .gap-6 {
+        gap: 0.75rem;
+      }
+    }
   
   </style>
 </head>
-<body class="bg-loom">
-  <div class="nav-sticky">
+<body>
+  <div class="bg-loom">
+  <div class="navbar nav-sticky">
     <div class="max-w-4xl mx-auto px-5 py-4 flex items-center justify-between">
       <div class="font-bold text-lg text-indigo-600">SDN OpenAPI</div>
       <div class="flex gap-6 ml-auto">
-        <a href="/docs.html" class="nav-link">ReDoc</a><a href="/swagger-ui.html" class="nav-link">Swagger UI</a><a href="/usage-guide.html" class="nav-link">Usage Guide</a><a href="/about.html" class="nav-link">About</a><a href="https://github.com" class="nav-link">GitHub</a>
+        <a href="/docs.html" class="nav-link">ReDoc</a><a href="/swagger-ui.html" class="nav-link">Swagger UI</a><a href="/usage-guide.html" class="nav-link">Usage Guide</a><a href="/about.html" class="nav-link">About</a><a href="https://github.com/melroser/sdn-openapi" class="nav-link">GitHub</a>
       </div>
     </div>
   </div>
@@ -450,13 +471,13 @@
 <h3>Our Solution</h3>
 <p>The OFAC API demonstrates how modern serverless architecture solves these problems:</p>
 <ul>
-<li><p><strong>Automatic Updates</strong>: Scheduled functions fetch the latest OFAC data from the U.S. Treasury, ensuring data is always current.</p>
+<li><p><strong>Automated Updates</strong>: Scheduled functions fetch OFAC data from the U.S. Treasury source files on a configured cadence.</p>
 </li>
 <li><p><strong>Efficient Storage</strong>: OFAC data is stored in Netlify Blobs, providing fast, reliable access without managing databases.</p>
 </li>
 <li><p><strong>Intelligent Search</strong>: Powered by Fuse.js, the search engine provides fuzzy matching that handles typos and partial names.</p>
 </li>
-<li><p><strong>Infinite Scalability</strong>: Netlify Functions automatically scale from zero to thousands of concurrent requests without any configuration.</p>
+<li><p><strong>Serverless Scaling Model</strong>: Netlify Functions provide a managed scaling model without maintaining application servers.</p>
 </li>
 <li><p><strong>Pay-Per-Use Pricing</strong>: You only pay for the compute time you actually use, not for idle servers.</p>
 </li>
@@ -474,7 +495,7 @@
 </li>
 <li><p><strong>Automatic Scaling</strong>: Traffic spikes are handled automatically. No need to provision capacity in advance or worry about overload.</p>
 </li>
-<li><p><strong>Built-in Security</strong>: Netlify provides DDoS protection, SSL/TLS, and security best practices out of the box.</p>
+<li><p><strong>Managed Platform Controls</strong>: Netlify provides hosted TLS and platform-level protections, while the API demonstrates application-level validation and admin update authentication.</p>
 </li>
 <li><p><strong>Fast Deployment</strong>: Changes deploy instantly. No waiting for servers to start or configuration to propagate.</p>
 </li>
@@ -527,8 +548,8 @@
 <p>The API is designed for real compliance use cases. It handles the specific requirements of OFAC screening, including fuzzy matching, entity types, and detailed entity information.</p>
 <h3>3. Developer Experience</h3>
 <p>We believe developers should enjoy using an API. Clear documentation, interactive examples, and helpful error messages make integration straightforward.</p>
-<h3>4. Production Ready</h3>
-<p>This is not a toy project. The API includes comprehensive error handling, rate limiting, logging, and security best practices.</p>
+<h3>4. Production-Style Patterns</h3>
+<p>This is a portfolio demo, not a regulated production compliance system. It demonstrates production-style API patterns such as validation, structured JSON errors, cache headers, scheduled refreshes, update-secret authentication, and clear data provenance.</p>
 <h3>5. Cost Conscious</h3>
 <p>We designed the system to be cost-effective. Serverless architecture means you only pay for what you use, not for idle capacity.</p>
 <h3>6. Open and Transparent</h3>
@@ -536,7 +557,7 @@
 <hr>
 <h2>Technical Highlights</h2>
 <h3>Automated Data Updates</h3>
-<p>A scheduled function runs daily to fetch the latest OFAC data from the U.S. Treasury. The data is parsed, indexed, and stored in Netlify Blobs. This ensures your compliance data is always current.</p>
+<p>A scheduled function fetches OFAC data from the U.S. Treasury source files. The data is parsed, indexed, and stored in Netlify Blobs so the demo can expose current source-derived metadata and search results.</p>
 <pre><code class="hljs language-plaintext">Daily Schedule
     ↓
 Fetch OFAC Data
@@ -563,8 +584,8 @@ API Ready</code></pre><h3>Fuzzy Search Engine</h3>
 <li>Sanctions program information</li>
 <li>Listing date and other metadata</li>
 </ul>
-<h3>Rate Limiting</h3>
-<p>The API implements intelligent rate limiting:</p>
+<h3>Rate Limit Design</h3>
+<p>The API documentation describes rate-limit targets for production hardening:</p>
 <ul>
 <li><strong>Search</strong>: 100 requests per minute per IP</li>
 <li><strong>Entity Details</strong>: 100 requests per minute per IP</li>
@@ -577,12 +598,12 @@ API Ready</code></pre><h3>Fuzzy Search Engine</h3>
 <li><strong>Validation</strong>: Invalid requests are rejected with clear error messages</li>
 <li><strong>Not Found</strong>: Missing entities return 404 with helpful information</li>
 <li><strong>Rate Limits</strong>: Rate limit responses include retry-after headers</li>
-<li><strong>Server Errors</strong>: Rare errors are logged and monitored</li>
+<li><strong>Server Errors</strong>: Unexpected errors return structured JSON responses</li>
 </ul>
 <hr>
 <h2>Lessons Learned</h2>
-<h3>1. Serverless is Production-Ready</h3>
-<p>We initially had concerns about serverless for compliance APIs. In practice, Netlify Functions proved to be reliable, scalable, and cost-effective. The automatic scaling handles traffic spikes effortlessly.</p>
+<h3>1. Serverless is a practical fit for this class of API</h3>
+<p>Netlify Functions are a practical fit for a small public data API: deployment is simple, infrastructure burden is low, and scaling is handled by the platform.</p>
 <h3>2. Fuzzy Search is Essential</h3>
 <p>Early versions used exact matching. We quickly learned that compliance screening requires fuzzy matching. Users search for &quot;Maduro&quot; (typo), &quot;Maduro&quot; (partial), and &quot;N. Maduro&quot; (abbreviated). Fuzzy search handles all these cases.</p>
 <h3>3. Documentation Matters</h3>
@@ -606,7 +627,7 @@ API Ready</code></pre><h3>Fuzzy Search Engine</h3>
 <h3>Our Expertise</h3>
 <ul>
 <li><strong>Cloud Architecture</strong>: Designing scalable, serverless systems on modern cloud platforms</li>
-<li><strong>API Development</strong>: Building robust, well-documented, production-ready APIs</li>
+<li><strong>API Development</strong>: Building robust, well-documented, production-style APIs</li>
 <li><strong>Full-Stack Development</strong>: From backend to frontend, we deliver complete systems</li>
 <li><strong>Proof of Concepts</strong>: Demonstrating technical feasibility and best practices</li>
 <li><strong>Compliance &amp; Security</strong>: Building systems that meet regulatory requirements</li>
@@ -671,7 +692,7 @@ API Ready</code></pre><h3>Fuzzy Search Engine</h3>
 <p>This proof-of-concept demonstrates what&#39;s possible with modern cloud architecture. We&#39;re excited about the potential for:</p>
 <ul>
 <li><strong>Enhanced Search</strong>: Machine learning-based entity matching</li>
-<li><strong>Webhooks</strong>: Real-time notifications when entities are added or removed</li>
+<li><strong>Webhooks</strong>: Notifications when entities are added, removed, or changed</li>
 <li><strong>Batch Processing</strong>: Screening large lists of entities efficiently</li>
 <li><strong>Multi-Jurisdiction</strong>: Supporting sanctions lists from other countries</li>
 <li><strong>Advanced Analytics</strong>: Insights into compliance screening patterns</li>
@@ -698,7 +719,7 @@ API Ready</code></pre><h3>Fuzzy Search Engine</h3>
 <ul>
 <li><strong>Website</strong>: <a href="https://devs.miami">devs.miami</a></li>
 <li><strong>Email</strong>: <a href="mailto:contact@devs.miami">contact@devs.miami</a></li>
-<li><strong>GitHub</strong>: <a href="https://github.com/devs-miami">devs-miami</a></li>
+<li><strong>GitHub</strong>: <a href="https://github.com/melroser/sdn-openapi">melroser/sdn-openapi</a></li>
 </ul>
 <hr>
 <h2>Related Resources</h2>
@@ -725,7 +746,13 @@ API Ready</code></pre><h3>Fuzzy Search Engine</h3>
 <p>Built with ❤️ by devs.miami</p>
 
       </article>
+      <footer class="footer">
+        Built by Robert Melrose · <a href="https://devs.miami">devs.miami</a> ·
+        <a href="https://github.com/melroser/sdn-openapi">GitHub</a>
+      </footer>
     </div>
+  </div>
+
   </div>
 
   <script>

@@ -28,13 +28,13 @@ When we started working on compliance solutions, we encountered several persiste
 
 The OFAC API demonstrates how modern serverless architecture solves these problems:
 
-- **Automatic Updates**: Scheduled functions fetch the latest OFAC data from the U.S. Treasury, ensuring data is always current.
+- **Automated Updates**: Scheduled functions fetch OFAC data from the U.S. Treasury source files on a configured cadence.
 
 - **Efficient Storage**: OFAC data is stored in Netlify Blobs, providing fast, reliable access without managing databases.
 
 - **Intelligent Search**: Powered by Fuse.js, the search engine provides fuzzy matching that handles typos and partial names.
 
-- **Infinite Scalability**: Netlify Functions automatically scale from zero to thousands of concurrent requests without any configuration.
+- **Serverless Scaling Model**: Netlify Functions provide a managed scaling model without maintaining application servers.
 
 - **Pay-Per-Use Pricing**: You only pay for the compute time you actually use, not for idle servers.
 
@@ -54,7 +54,7 @@ We chose serverless architecture (Netlify Functions) for several reasons:
 
 3. **Automatic Scaling**: Traffic spikes are handled automatically. No need to provision capacity in advance or worry about overload.
 
-4. **Built-in Security**: Netlify provides DDoS protection, SSL/TLS, and security best practices out of the box.
+4. **Managed Platform Controls**: Netlify provides hosted TLS and platform-level protections, while the API demonstrates application-level validation and admin update authentication.
 
 5. **Fast Deployment**: Changes deploy instantly. No waiting for servers to start or configuration to propagate.
 
@@ -114,9 +114,9 @@ The API is designed for real compliance use cases. It handles the specific requi
 
 We believe developers should enjoy using an API. Clear documentation, interactive examples, and helpful error messages make integration straightforward.
 
-### 4. Production Ready
+### 4. Production-Style Patterns
 
-This is not a toy project. The API includes comprehensive error handling, rate limiting, logging, and security best practices.
+This is a portfolio demo, not a regulated production compliance system. It demonstrates production-style API patterns such as validation, structured JSON errors, cache headers, scheduled refreshes, update-secret authentication, and clear data provenance.
 
 ### 5. Cost Conscious
 
@@ -132,7 +132,7 @@ The entire project is open source. You can see exactly how it works, audit the c
 
 ### Automated Data Updates
 
-A scheduled function runs daily to fetch the latest OFAC data from the U.S. Treasury. The data is parsed, indexed, and stored in Netlify Blobs. This ensures your compliance data is always current.
+A scheduled function fetches OFAC data from the U.S. Treasury source files. The data is parsed, indexed, and stored in Netlify Blobs so the demo can expose current source-derived metadata and search results.
 
 ```
 Daily Schedule
@@ -166,9 +166,9 @@ When you retrieve an entity, you get comprehensive information:
 - Sanctions program information
 - Listing date and other metadata
 
-### Rate Limiting
+### Rate Limit Design
 
-The API implements intelligent rate limiting:
+The API documentation describes rate-limit targets for production hardening:
 
 - **Search**: 100 requests per minute per IP
 - **Entity Details**: 100 requests per minute per IP
@@ -183,15 +183,15 @@ Comprehensive error handling ensures reliability:
 - **Validation**: Invalid requests are rejected with clear error messages
 - **Not Found**: Missing entities return 404 with helpful information
 - **Rate Limits**: Rate limit responses include retry-after headers
-- **Server Errors**: Rare errors are logged and monitored
+- **Server Errors**: Unexpected errors return structured JSON responses
 
 ---
 
 ## Lessons Learned
 
-### 1. Serverless is Production-Ready
+### 1. Serverless is a practical fit for this class of API
 
-We initially had concerns about serverless for compliance APIs. In practice, Netlify Functions proved to be reliable, scalable, and cost-effective. The automatic scaling handles traffic spikes effortlessly.
+Netlify Functions are a practical fit for a small public data API: deployment is simple, infrastructure burden is low, and scaling is handled by the platform.
 
 ### 2. Fuzzy Search is Essential
 
@@ -228,7 +228,7 @@ We believe in:
 ### Our Expertise
 
 - **Cloud Architecture**: Designing scalable, serverless systems on modern cloud platforms
-- **API Development**: Building robust, well-documented, production-ready APIs
+- **API Development**: Building robust, well-documented, production-style APIs
 - **Full-Stack Development**: From backend to frontend, we deliver complete systems
 - **Proof of Concepts**: Demonstrating technical feasibility and best practices
 - **Compliance & Security**: Building systems that meet regulatory requirements
@@ -305,7 +305,7 @@ We believe in transparency and community. The OFAC API is open source because:
 This proof-of-concept demonstrates what's possible with modern cloud architecture. We're excited about the potential for:
 
 - **Enhanced Search**: Machine learning-based entity matching
-- **Webhooks**: Real-time notifications when entities are added or removed
+- **Webhooks**: Notifications when entities are added, removed, or changed
 - **Batch Processing**: Screening large lists of entities efficiently
 - **Multi-Jurisdiction**: Supporting sanctions lists from other countries
 - **Advanced Analytics**: Insights into compliance screening patterns
@@ -337,7 +337,7 @@ Interested in consulting, custom development, or discussing your compliance chal
 
 - **Website**: [devs.miami](https://devs.miami)
 - **Email**: [contact@devs.miami](mailto:contact@devs.miami)
-- **GitHub**: [devs-miami](https://github.com/devs-miami)
+- **GitHub**: [melroser/sdn-openapi](https://github.com/melroser/sdn-openapi)
 
 ---
 
@@ -369,4 +369,3 @@ This project builds on the work of many talented developers and open source proj
 ---
 
 Built with ❤️ by devs.miami
-

@@ -5,12 +5,12 @@ The OFAC API provides endpoints for searching and retrieving sanctions data. All
 ## Base URL
 
 ```
-https://YOUR-SITE.netlify.app/api
+https://sdn-openapi.netlify.app/api
 ```
 
 ## Authentication
 
-Currently, the API does not require authentication for read operations. The optional `/api/update` endpoint may require a shared secret header if configured.
+Read endpoints do not require authentication. Manual `/api/update` calls require the configured update secret via `X-Update-Secret`, `X-API-Key`, `Authorization: Bearer ...`, or a JSON `secret` body.
 
 ## Endpoints
 
@@ -34,10 +34,10 @@ const searchEntities = async (query, limit = 20) => {
     limit: limit
   });
   
-  const response = await fetch(`https://YOUR-SITE.netlify.app/api/search?${params}`);
+  const response = await fetch(`https://sdn-openapi.netlify.app/api/search?${params}`);
   const data = await response.json();
   
-  console.log(`Found ${data.total} results:`);
+  console.log(`Found ${data.count} results:`);
   data.results.forEach(entity => {
     console.log(`- ${entity.name} (${entity.type}) - Score: ${entity.score}`);
   });
@@ -62,12 +62,12 @@ def search_entities(query, limit=20):
     }
     
     response = requests.get(
-        'https://YOUR-SITE.netlify.app/api/search',
+        'https://sdn-openapi.netlify.app/api/search',
         params=params
     )
     data = response.json()
     
-    print(f"Found {data['total']} results:")
+    print(f"Found {data['count']} results:")
     for entity in data['results']:
         print(f"- {entity['name']} ({entity['type']}) - Score: {entity['score']}")
     
@@ -81,15 +81,18 @@ search_entities('Maduro', 10)
 
 ```bash
 # Basic search
-curl "https://YOUR-SITE.netlify.app/api/search?q=Maduro&limit=10"
+curl "https://sdn-openapi.netlify.app/api/search?q=Maduro&limit=10"
 
 # Pretty-printed JSON response
-curl -s "https://YOUR-SITE.netlify.app/api/search?q=Maduro&limit=10" | jq .
+curl -s "https://sdn-openapi.netlify.app/api/search?q=Maduro&limit=10" | jq .
 ```
 
 **Response**:
 ```json
 {
+  "ok": true,
+  "q": "Maduro",
+  "count": 2,
   "results": [
     {
       "uid": "12345",
@@ -103,8 +106,7 @@ curl -s "https://YOUR-SITE.netlify.app/api/search?q=Maduro&limit=10" | jq .
       "type": "Individual",
       "score": 0.85
     }
-  ],
-  "total": 2
+  ]
 }
 ```
 
@@ -121,16 +123,17 @@ Retrieve complete details for a specific entity.
 
 ```javascript
 const getEntity = async (uid) => {
-  const response = await fetch(`https://YOUR-SITE.netlify.app/api/entity/${uid}`);
+  const response = await fetch(`https://sdn-openapi.netlify.app/api/entity/${uid}`);
   
   if (!response.ok) {
     throw new Error(`Entity not found: ${uid}`);
   }
   
-  const entity = await response.json();
+  const data = await response.json();
+  const entity = data.entity;
   console.log(`Entity: ${entity.name}`);
   console.log(`Type: ${entity.type}`);
-  console.log(`Aliases: ${entity.aliases.join(', ')}`);
+  console.log(`Aliases: ${entity.aka.join(', ')}`);
   
   return entity;
 };
@@ -145,17 +148,18 @@ getEntity('12345');
 def get_entity(uid):
     """Get detailed information about an entity"""
     response = requests.get(
-        f'https://YOUR-SITE.netlify.app/api/entity/{uid}'
+        f'https://sdn-openapi.netlify.app/api/entity/{uid}'
     )
     
     if response.status_code == 404:
         print(f"Entity not found: {uid}")
         return None
     
-    entity = response.json()
+    data = response.json()
+    entity = data['entity']
     print(f"Entity: {entity['name']}")
     print(f"Type: {entity['type']}")
-    print(f"Aliases: {', '.join(entity['aliases'])}")
+    print(f"Aliases: {', '.join(entity['aka'])}")
     
     return entity
 
@@ -167,31 +171,33 @@ get_entity('12345')
 
 ```bash
 # Get entity details
-curl "https://YOUR-SITE.netlify.app/api/entity/12345"
+curl "https://sdn-openapi.netlify.app/api/entity/12345"
 
 # Pretty-printed response
-curl -s "https://YOUR-SITE.netlify.app/api/entity/12345" | jq .
+curl -s "https://sdn-openapi.netlify.app/api/entity/12345" | jq .
 ```
 
 **Response**:
 ```json
 {
-  "uid": "12345",
-  "name": "Nicolás Maduro",
-  "type": "Individual",
-  "aliases": [
-    "Nicolás Maduro Moros",
-    "Maduro"
-  ],
-  "addresses": [
-    {
-      "address": "Miraflores Palace",
-      "city": "Caracas",
-      "country": "Venezuela"
-    }
-  ],
-  "dateOfBirth": "1962-11-23",
-  "placeOfBirth": "Caracas"
+  "ok": true,
+  "entity": {
+    "uid": "12345",
+    "name": "Nicolás Maduro",
+    "type": "Individual",
+    "aka": [
+      "Nicolás Maduro Moros",
+      "Maduro"
+    ],
+    "addresses": [
+      {
+        "address": "Miraflores Palace",
+        "city": "Caracas",
+        "country": "Venezuela"
+      }
+    ],
+    "programs": ["VENEZUELA"]
+  }
 }
 ```
 
@@ -205,12 +211,12 @@ Check dataset metadata and freshness.
 
 ```javascript
 const getMetadata = async () => {
-  const response = await fetch('https://YOUR-SITE.netlify.app/api/meta');
+  const response = await fetch('https://sdn-openapi.netlify.app/api/meta');
   const meta = await response.json();
   
-  console.log(`Last Updated: ${meta.lastUpdated}`);
-  console.log(`Total Records: ${meta.recordCount}`);
-  console.log(`API Version: ${meta.version}`);
+  console.log(`Fetched At: ${meta.fetchedAt}`);
+  console.log(`Total Entities: ${meta.counts.entities}`);
+  console.log(`SDN Hash: ${meta.hashes.sdnSha256}`);
   
   return meta;
 };
@@ -224,12 +230,12 @@ getMetadata();
 ```python
 def get_metadata():
     """Get dataset metadata"""
-    response = requests.get('https://YOUR-SITE.netlify.app/api/meta')
+    response = requests.get('https://sdn-openapi.netlify.app/api/meta')
     meta = response.json()
     
-    print(f"Last Updated: {meta['lastUpdated']}")
-    print(f"Total Records: {meta['recordCount']}")
-    print(f"API Version: {meta['version']}")
+    print(f"Fetched At: {meta['fetchedAt']}")
+    print(f"Total Entities: {meta['counts']['entities']}")
+    print(f"SDN Hash: {meta['hashes']['sdnSha256']}")
     
     return meta
 
@@ -241,18 +247,30 @@ get_metadata()
 
 ```bash
 # Get metadata
-curl "https://YOUR-SITE.netlify.app/api/meta"
+curl "https://sdn-openapi.netlify.app/api/meta"
 
 # Pretty-printed response
-curl -s "https://YOUR-SITE.netlify.app/api/meta" | jq .
+curl -s "https://sdn-openapi.netlify.app/api/meta" | jq .
 ```
 
 **Response**:
 ```json
 {
-  "lastUpdated": "2024-01-13T00:00:00Z",
-  "recordCount": 12345,
-  "version": "1.0.0"
+  "fetchedAt": "2026-06-29T06:00:35.535Z",
+  "source": {
+    "sdnUrl": "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.CSV"
+  },
+  "counts": {
+    "entities": 19122
+  },
+  "hashes": {
+    "sdnSha256": "..."
+  },
+  "delta": {
+    "addedCount": 0,
+    "removedCount": 0,
+    "changedCount": 0
+  }
 }
 ```
 
@@ -262,8 +280,9 @@ All errors return appropriate HTTP status codes with error details:
 
 ```json
 {
+  "ok": false,
   "error": "Error message",
-  "code": "ERROR_CODE"
+  "detail": {}
 }
 ```
 

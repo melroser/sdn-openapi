@@ -15,6 +15,28 @@ type OfacEntity = {
 
 let cachedEntities: { loadedAt: number; byId: Map<string, OfacEntity> } | null = null;
 
+function uidFromRequest(req: Request, context: Context): string | undefined {
+  const uidFromParams = context.params?.uid?.trim();
+  if (uidFromParams) return uidFromParams;
+
+  const url = new URL(req.url);
+  const uidFromQuery = url.searchParams.get("uid")?.trim();
+  if (uidFromQuery) return uidFromQuery;
+
+  const path = url.pathname.replace(/\/+$/, "");
+  const markers = ["/api/entity/", "/.netlify/functions/ofac-entity/"];
+
+  for (const marker of markers) {
+    const markerIndex = path.indexOf(marker);
+    if (markerIndex === -1) continue;
+
+    const uid = path.slice(markerIndex + marker.length).split("/")[0]?.trim();
+    if (uid) return decodeURIComponent(uid);
+  }
+
+  return undefined;
+}
+
 async function loadById() {
   if (cachedEntities && Date.now() - cachedEntities.loadedAt < 10 * 60 * 1000) return cachedEntities.byId;
 
@@ -33,7 +55,7 @@ async function loadById() {
 export default async (_req: Request, context: Context) => {
   if (_req.method === "OPTIONS") return preflight();
 
-  const uid = context.params?.uid;
+  const uid = uidFromRequest(_req, context);
   if (!uid) return err(400, "Missing :uid");
 
   try {

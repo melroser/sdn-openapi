@@ -15,12 +15,12 @@ The OFAC API is a REST API—no installation required. Simply make HTTP requests
 Get started in seconds with a simple search request:
 
 ```bash
-curl "https://YOUR-SITE.netlify.app/api/search?q=maduro"
+curl "https://sdn-openapi.netlify.app/api/search?q=maduro"
 ```
 
 ```javascript
 // JavaScript/Node.js
-const response = await fetch('https://YOUR-SITE.netlify.app/api/search?q=maduro');
+const response = await fetch('https://sdn-openapi.netlify.app/api/search?q=maduro');
 const data = await response.json();
 console.log(data);
 ```
@@ -29,7 +29,7 @@ console.log(data);
 # Python
 import requests
 
-response = requests.get('https://YOUR-SITE.netlify.app/api/search?q=maduro')
+response = requests.get('https://sdn-openapi.netlify.app/api/search?q=maduro')
 data = response.json()
 print(data)
 ```
@@ -40,6 +40,9 @@ All responses are JSON with a consistent structure:
 
 ```json
 {
+  "ok": true,
+  "q": "maduro",
+  "count": 1,
   "results": [
     {
       "uid": "12345",
@@ -47,8 +50,7 @@ All responses are JSON with a consistent structure:
       "type": "Individual",
       "score": 0.98
     }
-  ],
-  "total": 1
+  ]
 }
 ```
 
@@ -61,14 +63,14 @@ All responses are JSON with a consistent structure:
 Search for entities by name using fuzzy matching. The API returns results ranked by relevance.
 
 ```bash
-curl "https://YOUR-SITE.netlify.app/api/search?q=gazprom"
+curl "https://sdn-openapi.netlify.app/api/search?q=gazprom"
 ```
 
 ```javascript
 // Search for a company
 async function searchEntities(query) {
   const response = await fetch(
-    `https://YOUR-SITE.netlify.app/api/search?q=${encodeURIComponent(query)}`
+    `https://sdn-openapi.netlify.app/api/search?q=${encodeURIComponent(query)}`
   );
   const data = await response.json();
   return data.results;
@@ -87,7 +89,7 @@ import requests
 
 def search_entities(query):
     response = requests.get(
-        'https://YOUR-SITE.netlify.app/api/search',
+        'https://sdn-openapi.netlify.app/api/search',
         params={'q': query}
     )
     return response.json()['results']
@@ -104,7 +106,7 @@ Control the number of results returned:
 
 ```bash
 # Get top 5 results
-curl "https://YOUR-SITE.netlify.app/api/search?q=maduro&limit=5"
+curl "https://sdn-openapi.netlify.app/api/search?q=maduro&limit=5"
 ```
 
 ```javascript
@@ -116,20 +118,20 @@ async function searchWithLimit(query, limit = 10) {
   });
   
   const response = await fetch(
-    `https://YOUR-SITE.netlify.app/api/search?${params}`
+    `https://sdn-openapi.netlify.app/api/search?${params}`
   );
   return response.json();
 }
 
 const results = await searchWithLimit('maduro', 10);
-console.log(`Found ${results.total} matches, showing ${results.results.length}`);
+console.log(`Found ${results.count} matches, showing ${results.results.length}`);
 ```
 
 ```python
 # Python with limit
 def search_with_limit(query, limit=10):
     response = requests.get(
-        'https://YOUR-SITE.netlify.app/api/search',
+        'https://sdn-openapi.netlify.app/api/search',
         params={
             'q': query,
             'limit': min(limit, 50)  # Max 50 results
@@ -138,7 +140,7 @@ def search_with_limit(query, limit=10):
     return response.json()
 
 results = search_with_limit('maduro', 10)
-print(f"Found {results['total']} matches")
+print(f"Found {results['count']} matches")
 ```
 
 ### Handling Search Results
@@ -149,7 +151,7 @@ Process search results and filter by entity type:
 // Filter results by type
 async function searchByType(query, entityType) {
   const response = await fetch(
-    `https://YOUR-SITE.netlify.app/api/search?q=${encodeURIComponent(query)}`
+    `https://sdn-openapi.netlify.app/api/search?q=${encodeURIComponent(query)}`
   );
   const data = await response.json();
   
@@ -167,7 +169,7 @@ const companies = await searchByType('pdvsa', 'Entity');
 # Filter by entity type
 def search_by_type(query, entity_type):
     response = requests.get(
-        'https://YOUR-SITE.netlify.app/api/search',
+        'https://sdn-openapi.netlify.app/api/search',
         params={'q': query}
     )
     data = response.json()
@@ -191,21 +193,22 @@ companies = search_by_type('pdvsa', 'Entity')
 Once you have an entity UID from search results, retrieve complete details:
 
 ```bash
-curl "https://YOUR-SITE.netlify.app/api/entity/12345"
+curl "https://sdn-openapi.netlify.app/api/entity/12345"
 ```
 
 ```javascript
 // Get entity details
 async function getEntityDetails(uid) {
   const response = await fetch(
-    `https://YOUR-SITE.netlify.app/api/entity/${uid}`
+    `https://sdn-openapi.netlify.app/api/entity/${uid}`
   );
   
   if (!response.ok) {
     throw new Error(`Entity not found: ${uid}`);
   }
   
-  return response.json();
+  const data = await response.json();
+  return data.entity;
 }
 
 // Usage
@@ -213,9 +216,8 @@ try {
   const entity = await getEntityDetails('12345');
   console.log(`Name: ${entity.name}`);
   console.log(`Type: ${entity.type}`);
-  console.log(`Aliases: ${entity.aliases.join(', ')}`);
-  console.log(`Date of Birth: ${entity.dateOfBirth}`);
-  console.log(`Place of Birth: ${entity.placeOfBirth}`);
+  console.log(`Aliases: ${entity.aka.join(', ')}`);
+  console.log(`Programs: ${entity.programs.join(', ')}`);
   
   // Display addresses
   entity.addresses.forEach(addr => {
@@ -230,22 +232,21 @@ try {
 # Get entity details
 def get_entity_details(uid):
     response = requests.get(
-        f'https://YOUR-SITE.netlify.app/api/entity/{uid}'
+        f'https://sdn-openapi.netlify.app/api/entity/{uid}'
     )
     
     if response.status_code == 404:
         raise ValueError(f'Entity not found: {uid}')
     
-    return response.json()
+    return response.json()['entity']
 
 # Usage
 try:
     entity = get_entity_details('12345')
     print(f"Name: {entity['name']}")
     print(f"Type: {entity['type']}")
-    print(f"Aliases: {', '.join(entity['aliases'])}")
-    print(f"Date of Birth: {entity.get('dateOfBirth')}")
-    print(f"Place of Birth: {entity.get('placeOfBirth')}")
+    print(f"Aliases: {', '.join(entity['aka'])}")
+    print(f"Programs: {', '.join(entity['programs'])}")
     
     # Display addresses
     for addr in entity['addresses']:
@@ -263,7 +264,7 @@ Combine search and entity retrieval for a complete workflow:
 async function complianceCheck(name) {
   // Step 1: Search for the entity
   const searchResponse = await fetch(
-    `https://YOUR-SITE.netlify.app/api/search?q=${encodeURIComponent(name)}`
+    `https://sdn-openapi.netlify.app/api/search?q=${encodeURIComponent(name)}`
   );
   const searchData = await searchResponse.json();
   
@@ -274,14 +275,14 @@ async function complianceCheck(name) {
   // Step 2: Get details for top match
   const topMatch = searchData.results[0];
   const entityResponse = await fetch(
-    `https://YOUR-SITE.netlify.app/api/entity/${topMatch.uid}`
+    `https://sdn-openapi.netlify.app/api/entity/${topMatch.uid}`
   );
   const entityData = await entityResponse.json();
   
   return {
     status: 'match_found',
     confidence: topMatch.score,
-    entity: entityData
+    entity: entityData.entity
   };
 }
 
@@ -300,7 +301,7 @@ if (result.status === 'match_found') {
 def compliance_check(name):
     # Step 1: Search for the entity
     search_response = requests.get(
-        'https://YOUR-SITE.netlify.app/api/search',
+        'https://sdn-openapi.netlify.app/api/search',
         params={'q': name}
     )
     search_data = search_response.json()
@@ -311,9 +312,9 @@ def compliance_check(name):
     # Step 2: Get details for top match
     top_match = search_data['results'][0]
     entity_response = requests.get(
-        f"https://YOUR-SITE.netlify.app/api/entity/{top_match['uid']}"
+        f"https://sdn-openapi.netlify.app/api/entity/{top_match['uid']}"
     )
-    entity_data = entity_response.json()
+    entity_data = entity_response.json()['entity']
     
     return {
         'status': 'match_found',
@@ -324,7 +325,7 @@ def compliance_check(name):
 # Usage
 result = compliance_check('Nicolás Maduro')
 if result['status'] == 'match_found':
-    print(f"⚠️ Match found with {result['confidence']*100:.1f}% confidence")
+    print(f"⚠️ Match found with {result['confidence'] * 100:.1f}% confidence")
     print(f"Entity: {result['entity']['name']}")
 else:
     print("✓ No matches found - entity is clear")
@@ -339,34 +340,34 @@ else:
 Check when the OFAC data was last updated and how many entities are in the database:
 
 ```bash
-curl "https://YOUR-SITE.netlify.app/api/meta"
+curl "https://sdn-openapi.netlify.app/api/meta"
 ```
 
 ```javascript
 // Get metadata
 async function getMetadata() {
-  const response = await fetch('https://YOUR-SITE.netlify.app/api/meta');
+  const response = await fetch('https://sdn-openapi.netlify.app/api/meta');
   return response.json();
 }
 
 // Usage
 const meta = await getMetadata();
-console.log(`Last Updated: ${new Date(meta.lastUpdated).toLocaleString()}`);
-console.log(`Total Entities: ${meta.recordCount.toLocaleString()}`);
-console.log(`API Version: ${meta.version}`);
+console.log(`Fetched At: ${new Date(meta.fetchedAt).toLocaleString()}`);
+console.log(`Total Entities: ${meta.counts.entities.toLocaleString()}`);
+console.log(`SDN Hash: ${meta.hashes.sdnSha256}`);
 ```
 
 ```python
 # Get metadata
 def get_metadata():
-    response = requests.get('https://YOUR-SITE.netlify.app/api/meta')
+    response = requests.get('https://sdn-openapi.netlify.app/api/meta')
     return response.json()
 
 # Usage
 meta = get_metadata()
-print(f"Last Updated: {meta['lastUpdated']}")
-print(f"Total Entities: {meta['recordCount']:,}")
-print(f"API Version: {meta['version']}")
+print(f"Fetched At: {meta['fetchedAt']}")
+print(f"Total Entities: {meta['counts']['entities']:,}")
+print(f"SDN Hash: {meta['hashes']['sdnSha256']}")
 ```
 
 ### Check Data Freshness
@@ -377,7 +378,7 @@ Implement a data freshness check in your application:
 // Check if data is fresh (updated within last 24 hours)
 async function isDataFresh() {
   const meta = await getMetadata();
-  const lastUpdate = new Date(meta.lastUpdated);
+  const lastUpdate = new Date(meta.fetchedAt);
   const now = new Date();
   const hoursSinceUpdate = (now - lastUpdate) / (1000 * 60 * 60);
   
@@ -398,7 +399,7 @@ from datetime import datetime, timedelta
 
 def is_data_fresh():
     meta = get_metadata()
-    last_update = datetime.fromisoformat(meta['lastUpdated'].replace('Z', '+00:00'))
+    last_update = datetime.fromisoformat(meta['fetchedAt'].replace('Z', '+00:00'))
     now = datetime.now(last_update.tzinfo)
     hours_since_update = (now - last_update).total_seconds() / 3600
     
@@ -452,7 +453,7 @@ async function fetchWithRetry(url, maxRetries = 3) {
 }
 
 // Usage
-const data = await fetchWithRetry('https://YOUR-SITE.netlify.app/api/search?q=maduro');
+const data = await fetchWithRetry('https://sdn-openapi.netlify.app/api/search?q=maduro');
 ```
 
 ```python
@@ -476,7 +477,7 @@ def fetch_with_retry(url, max_retries=3):
     raise Exception('Max retries exceeded')
 
 # Usage
-data = fetch_with_retry('https://YOUR-SITE.netlify.app/api/search?q=maduro')
+data = fetch_with_retry('https://sdn-openapi.netlify.app/api/search?q=maduro')
 ```
 
 ### Caching Strategies
@@ -526,7 +527,7 @@ async function searchWithCache(query) {
   
   // Fetch from API
   const response = await fetch(
-    `https://YOUR-SITE.netlify.app/api/search?q=${encodeURIComponent(query)}`
+    `https://sdn-openapi.netlify.app/api/search?q=${encodeURIComponent(query)}`
   );
   const data = await response.json();
   
@@ -576,7 +577,7 @@ def search_with_cache(query):
     
     # Fetch from API
     response = requests.get(
-        'https://YOUR-SITE.netlify.app/api/search',
+        'https://sdn-openapi.netlify.app/api/search',
         params={'q': query}
     )
     data = response.json()
@@ -608,10 +609,10 @@ def search_with_cache(query):
 
 ```bash
 # ❌ Wrong
-curl "https://YOUR-SITE.netlify.app/api/search"
+curl "https://sdn-openapi.netlify.app/api/search"
 
 # ✅ Correct
-curl "https://YOUR-SITE.netlify.app/api/search?q=maduro"
+curl "https://sdn-openapi.netlify.app/api/search?q=maduro"
 ```
 
 #### "Entity not found"

@@ -1,9 +1,47 @@
-# SDN-OPENAPI
+# SDN OpenAPI
 
-An API comprised of netlify functions hosted for free.
-Providing developer-friendly access to U.S. Treasury sanctions data. 
-This proof-of-concept demonstrates how to build scalable, real-time 
-data services using contemporary cloud architecture.
+A TypeScript serverless API for querying U.S. Treasury OFAC Specially Designated Nationals data through OpenAPI, Swagger UI, ReDoc, and fuzzy search.
+
+## What this demonstrates
+
+This project is a portfolio-ready API demo showing:
+
+- TypeScript API implementation
+- OpenAPI specification design
+- Swagger UI and ReDoc documentation
+- Netlify Functions deployment
+- Netlify Blobs storage
+- Fuzzy search over sanctions data
+- Scheduled OFAC data refresh design
+- Refresh-delta metadata
+- Developer-friendly usage examples
+
+## Why I built it
+
+I built this as the compliance data layer for a larger financial intelligence prototype. The larger idea was to combine OFAC sanctions data, country-level risk signals, world news, AI sentiment analysis, and uncertainty modeling into a system that could support market research and risk-analysis workflows.
+
+This repo focuses on the API layer: making sanctions data easy to query, document, verify, and integrate.
+
+## Live demo
+
+- API site: https://sdn-openapi.netlify.app
+- Swagger UI: https://sdn-openapi.netlify.app/swagger-ui.html
+- ReDoc: https://sdn-openapi.netlify.app/docs.html
+- GitHub: https://github.com/melroser/sdn-openapi
+
+## Example endpoints
+
+```txt
+GET /api/search?q=maduro
+GET /api/entity/{uid}
+GET /api/meta
+```
+
+## Related project
+
+ED 209 is the uncertainty-aware screening prototype that consumes this API:
+
+https://github.com/melroser/ed-209
 
 ## Table of Contents
 
@@ -21,25 +59,27 @@ data services using contemporary cloud architecture.
 
 ## Overview
 
-The OFAC SDN JSON Wrapper API provides programmatic access to the U.S. Treasury's Office of Foreign Assets Control (OFAC) Specially Designated Nationals (SDN) list. Instead of parsing complex XML exports, developers can use a clean, modern JSON API with fuzzy search, entity retrieval, and metadata endpoints.
+The OFAC SDN JSON Wrapper API provides programmatic access to the U.S. Treasury's Office of Foreign Assets Control (OFAC) Specially Designated Nationals (SDN) list. Instead of parsing CSV exports directly, developers can use a clean JSON API with fuzzy search, entity retrieval, metadata, and refresh-delta information.
 
 **Key Features:**
 - **Fuzzy Search**: Find entities by name or alias with intelligent matching
-- **Entity Details**: Retrieve comprehensive information including aliases, addresses, and dates of birth
-- **Real-time Data**: Automatic dataset updates with manual refresh capability
-- **Serverless Architecture**: Scales automatically with zero infrastructure management
+- **Entity Details**: Retrieve stored OFAC entity records with aliases, addresses, programs, and remarks
+- **Automated OFAC Refresh**: Scheduled source-data refresh with manual admin trigger
+- **Delta Metadata**: Compare the newly refreshed dataset against the previously stored dataset
+- **Serverless Architecture**: Uses a managed serverless scaling model with zero application server management
 - **Developer-Friendly**: RESTful API with clear documentation and code examples
 
 ## Purpose & Motivation
 
-This project emerged from real-world experience integrating OFAC compliance checks into production systems. The challenge: OFAC publishes data in XML format that requires complex parsing, and compliance requirements demand fresh data with minimal latency.
+This project emerged from real-world experience integrating OFAC compliance checks into financial and compliance workflows. The challenge: raw sanctions data is awkward to integrate directly, and fuzzy matches need context before they become useful decisions.
 
-The solution: A serverless API that automatically fetches, parses, and indexes OFAC data, making it instantly accessible to any application. This proof-of-concept demonstrates:
+The solution: a serverless API that fetches, parses, indexes, and documents OFAC data so other systems can build on top of it. This proof-of-concept demonstrates:
 
 - **Modern Architecture**: Serverless functions eliminate infrastructure overhead
 - **Efficient Data Handling**: Compressed storage and in-memory caching for sub-100ms responses
-- **Scalability**: Handles thousands of concurrent requests without provisioning
+- **Serverless Scaling Model**: Managed platform scaling without provisioning app servers
 - **Developer Experience**: Clean API design with comprehensive documentation
+- **Fintech Relevance**: A concrete compliance data layer for risk-screening and financial intelligence prototypes
 
 Built by [devs.miami](#about-devsmiamicom), this project showcases the technical approach we bring to complex integration challenges.
 
@@ -51,10 +91,10 @@ Built by [devs.miami](#about-devsmiamicom), this project showcases the technical
 ├─────────────────────────────────────────────────────────────┤
 │                                                               │
 │  Data Source                                                 │
-│  └─ OFAC SLS XML Exports (Treasury.gov)                      │
+│  └─ OFAC SLS CSV Exports (Treasury.gov)                      │
 │                                                               │
 │  Data Pipeline                                               │
-│  ├─ ofac-update: Fetch & parse OFAC XML                      │
+│  ├─ ofac-update: Fetch & parse OFAC CSV                      │
 │  ├─ CSV parsing with entity normalization                    │
 │  ├─ Compression (gzip) for efficient storage                 │
 │  └─ Netlify Blobs: Persistent, distributed storage           │
@@ -62,7 +102,7 @@ Built by [devs.miami](#about-devsmiamicom), this project showcases the technical
 │  API Layer (Netlify Functions)                               │
 │  ├─ ofac-search: Fuzzy search with Fuse.js                   │
 │  ├─ ofac-entity: Entity detail retrieval                     │
-│  ├─ ofac-meta: Dataset metadata                              │
+│  ├─ ofac-meta: Dataset metadata + refresh delta              │
 │  └─ ofac-update: Manual refresh trigger                      │
 │                                                               │
 │  Client Applications                                         │
@@ -350,7 +390,7 @@ public/
 
 **Clear Cached Data:**
 If you need to clear the cached OFAC dataset:
-1. Trigger a manual update: `curl -X POST https://your-site.netlify.app/api/update`
+1. Trigger a manual update: `curl -X POST https://sdn-openapi.netlify.app/api/update`
 2. Or wait for the next scheduled update
 
 **Debug Function Execution:**
@@ -376,7 +416,7 @@ Search for entities in the OFAC sanctions list using fuzzy matching.
 
 **Example:**
 ```bash
-curl "https://your-site.netlify.app/api/search?q=Maduro&limit=10"
+curl "https://sdn-openapi.netlify.app/api/search?q=Maduro&limit=10"
 ```
 
 **Response:**
@@ -415,7 +455,7 @@ Retrieve complete details for a specific entity.
 
 **Example:**
 ```bash
-curl "https://your-site.netlify.app/api/entity/12345"
+curl "https://sdn-openapi.netlify.app/api/entity/12345"
 ```
 
 **Response:**
@@ -449,7 +489,7 @@ Retrieve information about the current dataset.
 
 **Example:**
 ```bash
-curl "https://your-site.netlify.app/api/meta"
+curl "https://sdn-openapi.netlify.app/api/meta"
 ```
 
 **Response:**
@@ -469,7 +509,7 @@ Manually trigger a refresh of the OFAC dataset.
 
 **Example:**
 ```bash
-curl -X POST "https://your-site.netlify.app/api/update"
+curl -X POST "https://sdn-openapi.netlify.app/api/update"
 ```
 
 **Response:**

@@ -81,6 +81,20 @@ describe("ofac-entity", () => {
       expect(data.entity.name).toBe("John Doe");
     });
 
+    it("should retrieve entity by uid from the request path when Netlify params are missing", async () => {
+      mockStore.get.mockResolvedValueOnce(gzippedDataset);
+
+      const context = { params: {} } as any;
+      const req = new Request("http://localhost/api/entity/1002");
+      const response = await entityHandler(req, context);
+
+      expect(response.status).toBe(200);
+      const data = await response.json() as any;
+      expect(data.ok).toBe(true);
+      expect(data.entity.uid).toBe("1002");
+      expect(data.entity.name).toBe("Jane Smith");
+    });
+
     it("should return full entity structure", async () => {
       mockStore.get.mockResolvedValueOnce(gzippedDataset);
 
@@ -160,7 +174,7 @@ describe("ofac-entity", () => {
       const data = await response.json() as any;
       expect(data.ok).toBe(false);
       expect(data.error).toBe("Not found");
-      expect(data.uid).toBe("9999");
+      expect(data.detail.uid).toBe("9999");
     });
 
     it("should return 404 with appropriate message", async () => {
