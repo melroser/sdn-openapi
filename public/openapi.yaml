@@ -7,8 +7,8 @@ info:
     access to U.S. Treasury sanctions data through a modern, developer-friendly interface.
     Data source is OFAC SLS exports.
   contact:
-    name: rob
-    url: devs.miami
+    name: Robert Melrose
+    url: https://devs.miami/finance
   license:
     name: MIT
 servers:

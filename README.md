@@ -28,6 +28,7 @@ This repo focuses on the API layer: making sanctions data easy to query, documen
 - Swagger UI: https://sdn-openapi.netlify.app/swagger-ui.html
 - ReDoc: https://sdn-openapi.netlify.app/docs.html
 - GitHub: https://github.com/melroser/sdn-openapi
+- Portfolio case study: https://devs.miami/finance
 
 ## Example endpoints
 
@@ -42,6 +43,10 @@ GET /api/meta
 ED 209 is the uncertainty-aware screening prototype that consumes this API:
 
 https://github.com/melroser/ed-209
+
+The recruiter-friendly case study that ties SDN OpenAPI and ED 209 together lives here:
+
+https://devs.miami/finance
 
 ## Table of Contents
 
@@ -163,8 +168,8 @@ Built by [devs.miami](#about-devsmiamicom), this project showcases the technical
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/devs-miami/ofac-api.git
-   cd ofac-api
+   git clone https://github.com/melroser/sdn-openapi.git
+   cd sdn-openapi
    ```
 
 2. **Install dependencies:**
@@ -620,8 +625,10 @@ With years of experience building production systems, Robert brings practical kn
 ### Get in Touch
 
 - **Website**: https://devs.miami
-- **GitHub**: https://github.com/devs-miami
-- **Email**: hello@devs.miami
+- **Portfolio case study**: https://devs.miami/finance
+- **Project GitHub**: https://github.com/melroser/sdn-openapi
+- **Related risk engine**: https://github.com/melroser/ed-209
+- **Email**: rob@devs.miami
 
 ---
 

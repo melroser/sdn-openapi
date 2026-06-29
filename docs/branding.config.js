@@ -22,6 +22,8 @@ export const brandingConfig = {
   founderName: 'Robert Melrose',
   founderTitle: 'Software Engineer & Founder',
   companyWebsite: 'https://devs.miami',
+  caseStudyUrl: 'https://devs.miami/finance',
+  ed209Url: 'https://github.com/melroser/ed-209',
   
   // Social Links
   socialLinks: {
@@ -36,6 +38,8 @@ export const brandingConfig = {
     { label: 'Swagger UI', href: '/swagger-ui.html' },
     { label: 'Usage Guide', href: '/usage-guide.html' },
     { label: 'About', href: '/about.html' },
+    { label: 'Case Study', href: 'https://devs.miami/finance' },
+    { label: 'ED 209', href: 'https://github.com/melroser/ed-209' },
     { label: 'GitHub', href: 'https://github.com/melroser/sdn-openapi' }
   ]
 };

@@ -74,6 +74,8 @@ function createHTMLTemplate(title, content, pageType = 'default') {
       </article>
       <footer class="footer">
         Built by Robert Melrose · <a href="https://devs.miami">devs.miami</a> ·
+        <a href="https://devs.miami/finance">Finance case study</a> ·
+        <a href="https://github.com/melroser/ed-209">ED 209</a> ·
         <a href="https://github.com/melroser/sdn-openapi">GitHub</a>
       </footer>
     </div>
@@ -698,6 +700,8 @@ async function buildAPIDocumentation(outputPath) {
         <a href="/api-docs.html" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">API Docs</a>
         <a href="/usage-guide.html" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">Usage Guide</a>
         <a href="/about.html" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">About</a>
+        <a href="https://devs.miami/finance" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">Case Study</a>
+        <a href="https://github.com/melroser/ed-209" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition">ED 209</a>
       </div>
     </div>
   </div>
@@ -886,6 +890,8 @@ async function buildAPIDocumentation(outputPath) {
       </article>
       <footer class="footer">
         Built by Robert Melrose · <a href="https://devs.miami">devs.miami</a> ·
+        <a href="https://devs.miami/finance">Finance case study</a> ·
+        <a href="https://github.com/melroser/ed-209">ED 209</a> ·
         <a href="https://github.com/melroser/sdn-openapi">GitHub</a>
       </footer>
     </div>

@@ -336,8 +336,10 @@ Try the OFAC API in your application:
 Interested in consulting, custom development, or discussing your compliance challenges?
 
 - **Website**: [devs.miami](https://devs.miami)
+- **Finance case study**: [Sanctions Intelligence Demo](https://devs.miami/finance)
 - **Email**: [contact@devs.miami](mailto:contact@devs.miami)
 - **GitHub**: [melroser/sdn-openapi](https://github.com/melroser/sdn-openapi)
+- **Related project**: [ED 209 uncertainty engine](https://github.com/melroser/ed-209)
 
 ---
 
@@ -345,6 +347,8 @@ Interested in consulting, custom development, or discussing your compliance chal
 
 - [U.S. Treasury OFAC](https://home.treasury.gov/policy-issues/financial-sanctions-and-terrorism/sanctions-programs-and-country-information)
 - [OFAC Sanctions List](https://sanctionslist.ofac.treas.gov/)
+- [ED 209 uncertainty engine](https://github.com/melroser/ed-209)
+- [Sanctions Intelligence Demo](https://devs.miami/finance)
 - [Netlify Functions Documentation](https://docs.netlify.com/functions/overview/)
 - [Fuse.js Documentation](https://fusejs.io/)
 - [OpenAPI Specification](https://spec.openapis.org/)

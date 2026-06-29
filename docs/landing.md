@@ -10,7 +10,7 @@ GET /api/entity/{uid}
 GET /api/meta
 ```
 
-[Try in Swagger UI](/swagger-ui.html) · [Read ReDoc](/docs.html) · [View GitHub](https://github.com/melroser/sdn-openapi)
+[Try in Swagger UI](/swagger-ui.html) · [Read ReDoc](/docs.html) · [View GitHub](https://github.com/melroser/sdn-openapi) · [Read the finance case study](https://devs.miami/finance)
 
 ---
 
@@ -43,6 +43,9 @@ The project demonstrates validation, structured JSON responses, cache headers, C
 This API began as the compliance data layer for a broader financial intelligence prototype: combine sanctions data, country-level signals, world news, AI-assisted sentiment analysis, and uncertainty modeling into a workflow for geopolitical risk research.
 
 The companion concept is **ED 209**, a Python FastAPI prototype that explores uncertainty-aware sanctions screening with Subjective Logic. Instead of treating a fuzzy match as a crude yes/no answer, the risk engine can explain which evidence is strong, which evidence is missing, and whether the next action should be clear, escalate, block, or gather more information.
+
+- **ED 209 source:** https://github.com/melroser/ed-209
+- **Combined case study:** https://devs.miami/finance
 
 ---
 
@@ -133,4 +136,4 @@ This project focuses on the API layer: making public sanctions data easy to quer
 
 ---
 
-Built by [Robert Melrose](https://devs.miami) as a fintech engineering portfolio project.
+Built by [Robert Melrose](https://devs.miami) as a fintech engineering portfolio project. See the combined [Sanctions Intelligence Demo](https://devs.miami/finance) for the SDN OpenAPI + ED 209 funnel.
